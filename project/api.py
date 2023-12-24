@@ -4,6 +4,7 @@ import os
 from project.models import User
 from project import db
 import json
+from project.utils import handle_api_exception
 
 api = Blueprint('api', __name__)
 
@@ -26,16 +27,13 @@ def prompt():
     if not text:
       return {
         'error': 'Missing required parameter: text'
-      }
+      }, 400
 
     return jsonify({
       'data': json.loads(get_completion(create_prompt(text)))
     })
   except Exception as e:
-    print(e)
-    return {
-      'error': 'Uknown error occured. Please try again later.'
-    }
+    return handle_api_exception(e)
  
     
 client = OpenAI()
@@ -80,6 +78,7 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
   
   return response.choices[0].message.content
 
+# dummy response for when openai is disabled
 OPEN_AI_DUMMY_RESPONSE = [
         {
             "label": "Username",
@@ -173,10 +172,7 @@ def get_users():
       } for user in users]
     })
   except Exception as e:
-    print(e)
-    return {
-      'error': 'Unknown error occured. Please try again later.'
-    }, 500
+    handle_api_exception(e)
 
 @api.route("/api/v1/user", methods=["POST"])
 def create_user():
@@ -206,8 +202,4 @@ def create_user():
       }
     })
   except Exception as e:
-    print(e)
-    db.session.rollback()
-    return {
-      'error': 'Uknown error occured. Please try again later.'
-    }, 500
+    handle_api_exception(e)
