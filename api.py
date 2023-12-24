@@ -1,14 +1,12 @@
-from flask import Flask, request, jsonify, Blueprint
 from openai import OpenAI
-from dotenv import load_dotenv
+from flask import request, jsonify, Blueprint
 import os
 
-load_dotenv()  # load environment variables from .env.
-app = Flask(__name__)
+api = Blueprint('api', __name__)
+
 OPEN_AI_ENABLED = os.getenv('OPEN_AI_ENABLED', 'false') == 'true'
 
-
-@app.route("/api/v1/prompt", methods=["POST"])
+@api.route("/api/v1/prompt", methods=["POST"])
 def prompt():
   try:
     if not OPEN_AI_ENABLED:
@@ -60,4 +58,3 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
   return response.choices[0].message.content
 
 OPEN_AI_DUMMY_RESPONSE = "[\n  {\n    \"label\": \"Name\",\n    \"name\": \"name\",\n    \"type\": \"text\"\n  },\n  {\n    \"label\": \"Email\",\n    \"name\": \"email\",\n    \"type\": \"email\"\n  },\n  {\n    \"label\": \"Password\",\n    \"name\": \"password\",\n    \"type\": \"password\"\n  },\n  {\n    \"label\": \"Confirm Password\",\n    \"name\": \"confirmPassword\",\n    \"type\": \"password\"\n  },\n  {\n    \"label\": \"Date of Birth\",\n    \"name\": \"dob\",\n    \"type\": \"date\"\n  },\n  {\n    \"label\": \"Gender\",\n    \"name\": \"gender\",\n    \"type\": \"radio\"\n  },\n  {\n    \"label\": \"Agree to Terms and Conditions\",\n    \"name\": \"agree\",\n    \"type\": \"checkbox\"\n  },\n  {\n    \"label\": \"Submit\",\n    \"name\": \"submit\",\n    \"type\": \"submit\"\n  }\n]"
-   
