@@ -8,5 +8,5 @@ def handle_api_exception(e, custom_message=None):
     default_error_message = "An error occurred while processing your request. Please try again later."
     
     return jsonify({
-        "error": custom_message or default_error_message
+        "message": custom_message or default_error_message
     }), 500

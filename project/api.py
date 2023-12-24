@@ -26,7 +26,7 @@ def prompt():
 
     if not text:
       return {
-        'error': 'Missing required parameter: text'
+        'message': 'Missing required parameter: text'
       }, 400
 
     return jsonify({
@@ -182,12 +182,12 @@ def create_user():
     
     if not username:
       return jsonify({
-        'error': 'Missing required parameter: username'
+        'message': 'Missing required parameter: username'
       }), 400
     
     if not email:
       return jsonify({
-        'error': 'Missing required parameter: email'
+        'message': 'Missing required parameter: email'
       }), 400
     
     user = User(username=username, email=email)
