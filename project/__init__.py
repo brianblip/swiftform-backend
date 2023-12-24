@@ -1,6 +1,5 @@
 from flask import Flask
 from dotenv import load_dotenv
-from .api import api
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 import os
@@ -14,11 +13,13 @@ load_dotenv()  # load environment variables from .env.
 
 def create_app():
   app = Flask(__name__)
-  app.register_blueprint(api)
 
   app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 
   db.init_app(app)
+
+  from .api import api
+  app.register_blueprint(api)
 
   return app
 
