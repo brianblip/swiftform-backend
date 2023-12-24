@@ -3,6 +3,7 @@ from flask import request, jsonify, Blueprint
 import os
 from project.models import User
 from project import db
+import json
 
 api = Blueprint('api', __name__)
 
@@ -28,7 +29,7 @@ def prompt():
       }
 
     return jsonify({
-      'data': get_completion(create_prompt(text))
+      'data': json.loads(get_completion(create_prompt(text)))
     })
   except Exception as e:
     print(e)
