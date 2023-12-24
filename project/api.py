@@ -64,7 +64,48 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
   
   return response.choices[0].message.content
 
-OPEN_AI_DUMMY_RESPONSE = "[\n  {\n    \"label\": \"Name\",\n    \"name\": \"name\",\n    \"type\": \"text\"\n  },\n  {\n    \"label\": \"Email\",\n    \"name\": \"email\",\n    \"type\": \"email\"\n  },\n  {\n    \"label\": \"Password\",\n    \"name\": \"password\",\n    \"type\": \"password\"\n  },\n  {\n    \"label\": \"Confirm Password\",\n    \"name\": \"confirmPassword\",\n    \"type\": \"password\"\n  },\n  {\n    \"label\": \"Date of Birth\",\n    \"name\": \"dob\",\n    \"type\": \"date\"\n  },\n  {\n    \"label\": \"Gender\",\n    \"name\": \"gender\",\n    \"type\": \"radio\"\n  },\n  {\n    \"label\": \"Agree to Terms and Conditions\",\n    \"name\": \"agree\",\n    \"type\": \"checkbox\"\n  },\n  {\n    \"label\": \"Submit\",\n    \"name\": \"submit\",\n    \"type\": \"submit\"\n  }\n]"
+OPEN_AI_DUMMY_RESPONSE = [
+        {
+            "label": "Name",
+            "name": "name",
+            "type": "text"
+        },
+        {
+            "label": "Email",
+            "name": "email",
+            "type": "email"
+        },
+        {
+            "label": "Password",
+            "name": "password",
+            "type": "password"
+        },
+        {
+            "label": "Confirm Password",
+            "name": "confirmPassword",
+            "type": "password"
+        },
+        {
+            "label": "Date of Birth",
+            "name": "dob",
+            "type": "date"
+        },
+        {
+            "label": "Gender",
+            "name": "gender",
+            "type": "radio"
+        },
+        {
+            "label": "Agree to Terms and Conditions",
+            "name": "agree",
+            "type": "checkbox"
+        },
+        {
+            "label": "Submit",
+            "name": "submit",
+            "type": "submit"
+        }
+]
 
 #
 # user endpoints
