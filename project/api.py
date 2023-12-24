@@ -44,10 +44,26 @@ client = OpenAI()
 def create_prompt(text):
   prompt = f"""
     You will be provided with text delimited by triple backticks.
-    Your task is to provide input fields for a form described in the text.
-    Provide an array of objects in json format with the following keys:
-    label, name, and type
-    
+    This text will describe a form that you need to help create.
+    Your task is to provide an array of objects in JSON format.
+    - label: The label of the field.
+    - name: The name attribute of the field.
+    - type: The type of the input field (e.g., text, email, password).
+    - validations: An array of validation rules for the field.
+
+    Validations are optional. If validations are provided, you must provide an array of validation objects. And it must contain the following properties:
+    - type: The type of validation (e.g., required, minLength, maxLength).
+    - value: The value of the validation (e.g., true, 10, 100).
+    - message: The error message to display if the validation fails.
+
+    Supported validations are:
+    - required: The field is required.
+    - minLength: The minimum length of the field.
+    - maxLength: The maximum length of the field.
+    - min: The minimum value of the field.
+    - max: The maximum value of the field.
+    - pattern: The pattern the field must match.
+
     ```{text}```
     """
   
