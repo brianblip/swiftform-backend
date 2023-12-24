@@ -1,15 +1,27 @@
 from flask import Flask, request, jsonify, Blueprint
 from openai import OpenAI
 from dotenv import load_dotenv
+import os
 
 load_dotenv()  # load environment variables from .env.
 app = Flask(__name__)
+OPEN_AI_ENABLED = os.getenv('OPEN_AI_ENABLED', 'false') == 'true'
 
 
 @app.route("/api/v1/prompt", methods=["POST"])
 def prompt():
   try:
-    text = request.json.get('text')
+    if not OPEN_AI_ENABLED:
+      return {
+        'data': OPEN_AI_DUMMY_RESPONSE
+      }
+    
+    text = request.json.get('text', None)
+
+    if not text:
+      return {
+        'error': 'Missing required parameter: text'
+      }
 
     return jsonify({
       'data': get_completion(create_prompt(text))
@@ -23,16 +35,7 @@ def prompt():
     
 client = OpenAI()
     
-def get_completion(prompt, model="gpt-3.5-turbo"):
-  messages = [{"role": "user", "content": prompt}]
-  response =  client.chat.completions.create(
-    model=model,
-    messages=messages,
-    temperature=0
-  )
-  
-  return response.choices[0].message.content
-
+# give instructions to llm on how to complete the task based on the text provided
 def create_prompt(text):
   prompt = f"""
     You will be provided with text delimited by triple backticks.
@@ -44,4 +47,17 @@ def create_prompt(text):
     """
   
   return prompt
+
+# returns the response from llm based on the prompt provided
+def get_completion(prompt, model="gpt-3.5-turbo"):
+  messages = [{"role": "user", "content": prompt}]
+  response =  client.chat.completions.create(
+    model=model,
+    messages=messages,
+    temperature=0
+  )
+  
+  return response.choices[0].message.content
+
+OPEN_AI_DUMMY_RESPONSE = "[\n  {\n    \"label\": \"Name\",\n    \"name\": \"name\",\n    \"type\": \"text\"\n  },\n  {\n    \"label\": \"Email\",\n    \"name\": \"email\",\n    \"type\": \"email\"\n  },\n  {\n    \"label\": \"Password\",\n    \"name\": \"password\",\n    \"type\": \"password\"\n  },\n  {\n    \"label\": \"Confirm Password\",\n    \"name\": \"confirmPassword\",\n    \"type\": \"password\"\n  },\n  {\n    \"label\": \"Date of Birth\",\n    \"name\": \"dob\",\n    \"type\": \"date\"\n  },\n  {\n    \"label\": \"Gender\",\n    \"name\": \"gender\",\n    \"type\": \"radio\"\n  },\n  {\n    \"label\": \"Agree to Terms and Conditions\",\n    \"name\": \"agree\",\n    \"type\": \"checkbox\"\n  },\n  {\n    \"label\": \"Submit\",\n    \"name\": \"submit\",\n    \"type\": \"submit\"\n  }\n]"
    
