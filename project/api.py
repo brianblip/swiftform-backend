@@ -82,46 +82,79 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
 
 OPEN_AI_DUMMY_RESPONSE = [
         {
-            "label": "Name",
-            "name": "name",
-            "type": "text"
+            "label": "Username",
+            "name": "username",
+            "type": "text",
+            "validations": [
+                {
+                    "message": "Username is required",
+                    "type": "required",
+                    "value": True
+                },
+                {
+                    "message": "Username must be at least 6 characters long",
+                    "type": "minLength",
+                    "value": 6
+                },
+                {
+                    "message": "Username cannot exceed 20 characters",
+                    "type": "maxLength",
+                    "value": 20
+                }
+            ]
         },
         {
             "label": "Email",
             "name": "email",
-            "type": "email"
+            "type": "email",
+            "validations": [
+                {
+                    "message": "Email is required",
+                    "type": "required",
+                    "value": True
+                },
+                {
+                    "message": "Invalid email format",
+                    "type": "pattern",
+                    "value": "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$"
+                }
+            ]
         },
         {
             "label": "Password",
             "name": "password",
-            "type": "password"
+            "type": "password",
+            "validations": [
+                {
+                    "message": "Password is required",
+                    "type": "required",
+                    "value": True
+                },
+                {
+                    "message": "Password must be at least 8 characters long",
+                    "type": "minLength",
+                    "value": 8
+                }
+            ]
         },
         {
             "label": "Confirm Password",
             "name": "confirmPassword",
-            "type": "password"
-        },
-        {
-            "label": "Date of Birth",
-            "name": "dob",
-            "type": "date"
-        },
-        {
-            "label": "Gender",
-            "name": "gender",
-            "type": "radio"
-        },
-        {
-            "label": "Agree to Terms and Conditions",
-            "name": "agree",
-            "type": "checkbox"
-        },
-        {
-            "label": "Submit",
-            "name": "submit",
-            "type": "submit"
+            "type": "password",
+            "validations": [
+                {
+                    "message": "Confirm Password is required",
+                    "type": "required",
+                    "value": True
+                },
+                {
+                    "message": "Confirm Password must be at least 8 characters long",
+                    "type": "minLength",
+                    "value": 8
+                }
+            ]
         }
-]
+    ]
 
 #
 # user endpoints
