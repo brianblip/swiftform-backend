@@ -2,6 +2,14 @@ from sqlalchemy import Enum
 
 from . import db
 
+class Session(db.Model):
+    __tablename__ = 'sessions'
+    __table_args__ = {'extend_existing': True} # I get error "Table 'sessions' is already defined for this MetaData instance. Specify 'extend_existing=True' to redefine options and columns on an existing Table object." without this. Not sure if this is the best way to fix it, but it works. 
+    id = db.Column(db.Integer, primary_key=True)
+    session_id = db.Column(db.String(255), unique=True)
+    data = db.Column(db.LargeBinary)
+    expiry = db.Column(db.TIMESTAMP(timezone=False))
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
