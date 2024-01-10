@@ -1,5 +1,5 @@
 from openai import OpenAI
-from flask import request, jsonify, Blueprint
+from flask import request, jsonify, Blueprint, session
 import os
 from project.models import User
 from project import db
@@ -244,3 +244,29 @@ def register_user():
         db.session.rollback()
         handle_api_exception(e)
 
+
+@api.route("/api/v1/auth/login", methods=["POST"])
+def login_user():
+    email = request.json.get('email')
+    password = request.json.get('password')
+
+    try:
+        user = User.query.filter_by(email=email).first()
+
+        if not user or not check_password_hash(user.password, password):
+            return jsonify({
+                'message': 'Invalid email or password'
+            }), 401
+
+        session["user_id"] = user.id
+        return jsonify({
+            'data': {
+                'id': user.id,
+                'name': user.name,
+                'email': user.email,
+                'avatar_url': user.avatar_url
+            }
+        })
+
+    except Exception as e:
+        handle_api_exception(e)
