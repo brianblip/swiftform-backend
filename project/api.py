@@ -281,6 +281,17 @@ def logout_user():
             'message': 'Successfully logged out'
         })
     except Exception as e:
-        return end.handle_api_exception(e)
+        return handle_api_exception(e)
     
 
+#
+# utils
+#
+    
+# gets currently logged in user
+def get_current_user():
+    user_id = session.get("user_id")
+
+    user = User.query.filter_by(id=user_id).first()
+ 
+    return user
