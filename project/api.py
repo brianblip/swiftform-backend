@@ -206,6 +206,31 @@ def create_user():
     handle_api_exception(e)
 
 
+# get currently logged in user data
+@api.route("/api/v1/users/me", methods=["GET"])
+def get_current_user():
+  try:
+    user_id = session.get("user_id")
+
+    user = User.query.filter_by(id=user_id).first()
+
+    if not user:
+      return jsonify({
+        'message': 'User not found'
+      })
+
+    return jsonify({
+      'data': {
+        'id': user.id,
+        'name': user.name,
+        'email': user.email,
+        'avatar_url': user.avatar_url
+      }
+    })
+  except Exception as e:
+    handle_api_exception(e)
+
+
 #
 # auth endpoints
 #
