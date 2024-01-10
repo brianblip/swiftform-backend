@@ -270,3 +270,17 @@ def login_user():
 
     except Exception as e:
         handle_api_exception(e)
+
+
+@api.route("/api/v1/auth/logout", methods=["POST"])
+def logout_user():
+    try:
+        session["user_id"] = None
+
+        return jsonify({
+            'message': 'Successfully logged out'
+        })
+    except Exception as e:
+        return end.handle_api_exception(e)
+    
+
