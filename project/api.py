@@ -35,8 +35,8 @@ def prompt():
   except Exception as e:
     return handle_api_exception(e)
  
-    
-client = OpenAI()
+if OPEN_AI_ENABLED:
+    client = OpenAI()
     
 # give instructions to llm on how to complete the task based on the text provided
 def create_prompt(text):
