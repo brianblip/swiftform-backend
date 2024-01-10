@@ -5,6 +5,7 @@ from project.models import User
 from project import db
 import json
 from project.utils import handle_api_exception
+from werkzeug.security import generate_password_hash, check_password_hash
 
 api = Blueprint('api', __name__)
 
@@ -203,3 +204,43 @@ def create_user():
     })
   except Exception as e:
     handle_api_exception(e)
+
+
+#
+# auth endpoints
+#
+    
+@api.route('/api/v1/auth/register', methods=['POST'])
+def register_user():
+    name = request.json.get('name')
+    email = request.json.get('email')
+    password = request.json.get('password')
+    avatar_url = request.json.get('avatar_url')
+
+    try:
+        user = User.query.filter_by(email=email).first()
+
+        if user:
+            return jsonify({
+                'message': 'User already exists'
+            }), 400
+        
+        hashed_password = generate_password_hash(password, method="scrypt")
+
+        new_user = User(name=name, email=email, password=hashed_password, avatar_url=avatar_url)
+        db.session.add(new_user)
+        db.session.commit()
+
+        return jsonify({
+            'data': {
+                'id': new_user.id,
+                'name': new_user.name,
+                'email': new_user.email,
+                'avatar_url': new_user.avatar_url
+            }
+        })
+    
+    except Exception as e:
+        db.session.rollback()
+        handle_api_exception(e)
+
