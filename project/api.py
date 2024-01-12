@@ -7,6 +7,9 @@ import json
 from project.utils import handle_api_exception
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+
 api = Blueprint('api', __name__)
 
 OPEN_AI_ENABLED = os.getenv('OPEN_AI_ENABLED', 'false') == 'true'
@@ -283,13 +286,11 @@ def login_user():
                 'message': 'Invalid email or password'
             }), 401
 
-        session["user_id"] = user.id
+        access_token = create_access_token(identity=user.id)
+
         return jsonify({
             'data': {
-                'id': user.id,
-                'name': user.name,
-                'email': user.email,
-                'avatar_url': user.avatar_url
+                'access_token': access_token,
             }
         })
 
