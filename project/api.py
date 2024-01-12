@@ -1,5 +1,5 @@
 from openai import OpenAI
-from flask import request, jsonify, Blueprint, session
+from flask import request, jsonify, Blueprint
 import os
 from project.models import User
 from project import db
@@ -301,7 +301,7 @@ def login_user():
 @api.route("/api/v1/auth/logout", methods=["POST"])
 def logout_user():
     try:
-        session["user_id"] = None
+        # session["user_id"] = None
 
         return jsonify({
             'message': 'Successfully logged out'
@@ -310,14 +310,5 @@ def logout_user():
         return handle_api_exception(e)
     
 
-#
-# utils
-#
-    
-# gets currently logged in user
-def get_current_user():
-    user_id = session.get("user_id")
 
-    user = User.query.filter_by(id=user_id).first()
- 
-    return user
+

@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 import os
-from flask_session import Session
 from flask_jwt_extended import JWTManager
 
 class Base(DeclarativeBase):
@@ -24,7 +23,6 @@ def create_app():
   app.config["JWT_SECRET_KEY"] = "asd"  # Change this!
 
   jwt.init_app(app)
-  Session(app)
   db.init_app(app)
 
   from .api import api

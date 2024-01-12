@@ -4,6 +4,5 @@ python-dotenv
 psycopg2-binary
 Flask-SQLAlchemy
 alembic
-Flask-Session
 Werkzeug
 flask-jwt-extended
