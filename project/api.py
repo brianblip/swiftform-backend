@@ -8,7 +8,7 @@ from project.utils import handle_api_exception
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, current_user
 
 api = Blueprint('api', __name__)
 
@@ -211,23 +211,24 @@ def create_user():
 
 # get currently logged in user data
 @api.route("/api/v1/users/me", methods=["GET"])
+@jwt_required()
 def get_current_user():
   try:
-    user_id = session.get("user_id")
+    # user_id = session.get("user_id")
 
-    user = User.query.filter_by(id=user_id).first()
+    # user = User.query.filter_by(id=user_id).first()
 
-    if not user:
-      return jsonify({
-        'message': 'User not found'
-      })
+    # if not user:
+    #   return jsonify({
+    #     'message': 'User not found'
+    #   })
 
     return jsonify({
       'data': {
-        'id': user.id,
-        'name': user.name,
-        'email': user.email,
-        'avatar_url': user.avatar_url
+        'id': current_user.id,
+        'name': current_user.name,
+        'email': current_user.email,
+        'avatar_url': current_user.avatar_url
       }
     })
   except Exception as e:
