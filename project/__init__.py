@@ -10,6 +10,7 @@ class Base(DeclarativeBase):
   pass
 
 db = SQLAlchemy(model_class=Base)
+jwt = JWTManager()  # Create the JWTManager instance
 
 load_dotenv()  # load environment variables from .env.
 
@@ -22,7 +23,7 @@ def create_app():
   app.config['SESSION_SQLALCHEMY_TABLE'] = 'sessions'
   app.config["JWT_SECRET_KEY"] = "asd"  # Change this!
 
-  JWTManager(app)
+  jwt.init_app(app)
   Session(app)
   db.init_app(app)
 
