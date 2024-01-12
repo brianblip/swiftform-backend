@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 import os
 from flask_session import Session
+from flask_jwt_extended import JWTManager
 
 class Base(DeclarativeBase):
   pass
@@ -19,7 +20,9 @@ def create_app():
   app.config['SESSION_TYPE'] = 'sqlalchemy'
   app.config['SESSION_SQLALCHEMY'] = db
   app.config['SESSION_SQLALCHEMY_TABLE'] = 'sessions'
+  app.config["JWT_SECRET_KEY"] = "asd"  # Change this!
 
+  JWTManager(app)
   Session(app)
   db.init_app(app)
 
