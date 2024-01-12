@@ -6,3 +6,4 @@ Flask-SQLAlchemy
 alembic
 Flask-Session
 Werkzeug
+flask-jwt-extended
