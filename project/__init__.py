@@ -20,7 +20,7 @@ def create_app():
   app.config['SESSION_TYPE'] = 'sqlalchemy'
   app.config['SESSION_SQLALCHEMY'] = db
   app.config['SESSION_SQLALCHEMY_TABLE'] = 'sessions'
-  app.config["JWT_SECRET_KEY"] = "asd"  # Change this!
+  app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")
 
   jwt.init_app(app)
   db.init_app(app)
