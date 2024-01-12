@@ -163,52 +163,6 @@ OPEN_AI_DUMMY_RESPONSE = [
 # user endpoints
 #
 
-@api.route("/api/v1/users", methods=["GET"])
-def get_users():
-  try:
-    users = User.query.all()
-
-    return jsonify({
-      'data': [{
-        'id': user.id,
-        'username': user.username,
-        'email': user.email
-      } for user in users]
-    })
-  except Exception as e:
-    handle_api_exception(e)
-
-@api.route("/api/v1/user", methods=["POST"])
-def create_user():
-  try:
-    username = request.json.get('username', None)
-    email = request.json.get('email', None)
-    
-    if not username:
-      return jsonify({
-        'message': 'Missing required parameter: username'
-      }), 400
-    
-    if not email:
-      return jsonify({
-        'message': 'Missing required parameter: email'
-      }), 400
-    
-    user = User(username=username, email=email)
-    db.session.add(user)
-    db.session.commit()
-
-    return jsonify({
-      'data': {
-        'id': user.id,
-        'username': user.username,
-        'email': user.email
-      }
-    })
-  except Exception as e:
-    handle_api_exception(e)
-
-
 # get currently logged in user data
 @api.route("/api/v1/users/me", methods=["GET"])
 @jwt_required()
