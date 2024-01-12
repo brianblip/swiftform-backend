@@ -169,15 +169,7 @@ OPEN_AI_DUMMY_RESPONSE = [
 @jwt_required()
 def get_current_user():
   try:
-    # user_id = session.get("user_id")
-
-    # user = User.query.filter_by(id=user_id).first()
-
-    # if not user:
-    #   return jsonify({
-    #     'message': 'User not found'
-    #   })
-
+   
     return jsonify({
       'data': {
         'id': current_user.id,
