@@ -1,14 +1,15 @@
 from openai import OpenAI
 from flask import request, jsonify, Blueprint
 import os
-from project.models import User
+from project.models import User, TokenBlocklist
 from project import db
 import json
 from project.utils import handle_api_exception
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, timezone
 
 
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, current_user
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, current_user, get_jwt
 
 api = Blueprint('api', __name__)
 
@@ -253,9 +254,13 @@ def login_user():
 
 
 @api.route("/api/v1/auth/logout", methods=["POST"])
+@jwt_required()
 def logout_user():
     try:
-        # session["user_id"] = None
+        jti = get_jwt()["jti"]
+        now = datetime.now(timezone.utc)
+        db.session.add(TokenBlocklist(jti=jti, created_at=now))
+        db.session.commit()
 
         return jsonify({
             'message': 'Successfully logged out'
