@@ -65,3 +65,35 @@ Run the Flask application using the following command:
 ```bash
 flask run
 ```
+
+### Database Migrations with Alembic
+
+To manage database migrations with Alembic in your Flask project, follow these commands:
+
+#### 1. Generate Migration
+
+Create a new migration script after making changes to your models:
+
+```bash
+alembic revision --autogenerate -m "Description of changes"
+```
+
+#### 2. Apply Migrations
+
+Update your database to the latest migration:
+
+```bash
+alembic upgrade head
+```
+
+This command applies any pending migrations and updates your database schema.
+
+#### 3. Rollback Migrations
+
+If you encounter issues or need to revert the database to a previous state, you can roll back the last applied migration using the following command:
+
+```bash
+alembic downgrade -1
+```
+
+Running this command will undo the changes introduced by the last migration, effectively rolling back your database schema to the state it was in before the last migration was applied. Be cautious when using downgrade, as it can lead to data loss if not handled carefully.
