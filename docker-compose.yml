@@ -1,0 +1,50 @@
+version: "4.8.0"
+services:
+  swiftform_app:
+    container_name: swiftform_app
+    build:
+      context: .
+      dockerfile: ./docker/python/Dockerfile
+    restart: "unless-stopped"
+    working_dir: "/home/sf/app"
+    # ports:
+    #   - '8000:8000'
+    expose:
+      - 8000
+    depends_on:
+      - swiftform_postgres
+    networks:
+      - swiftform_network
+
+  swiftform_nginx:
+    container_name: swiftform_nginx
+    image: swiftform_nginx
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8000:80
+    depends_on:
+      - swiftform_app
+    environment:
+      - FLASK_SERVER_ADDR=swiftform_app:8000
+    networks:
+      - swiftform_network
+
+  swiftform_postgres:
+    container_name: swiftform_postgres
+    image: postgres:16.1
+    restart: unless-stopped
+    # volumes:
+    #   - ./storage/db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: db_swiftform
+      POSTGRES_USER: sfuser
+      POSTGRES_PASSWORD: password
+    networks:
+      - swiftform_network
+
+networks:
+  swiftform_network:
+    driver: bridge
