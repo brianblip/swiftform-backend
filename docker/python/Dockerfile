@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install --upgrade pip
 
 RUN apk update \
-    apk add curl
+    && apk add curl
 
 RUN adduser -D sf
 RUN mkdir -p /home/sf/app && chown -R sf:sf /home/sf/app
