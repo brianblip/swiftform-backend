@@ -18,11 +18,6 @@ USER sf
 
 COPY --chown=sf:sf . .
 
-ENV VIRTUAL_ENV=/home/sf/.venv
-
-RUN python -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-RUN export FLASK_APP=app.py
 RUN pip install -r requirements.txt
 
 EXPOSE 8000
