@@ -28,7 +28,7 @@ services:
     depends_on:
       - swiftform_app
     environment:
-      - FLASK_SERVER_ADDR=swiftform_app:8000
+      - FLASK_SERVER_ADDR=127.0.0.1:8000
     networks:
       - swiftform_network
 
