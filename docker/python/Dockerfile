@@ -27,4 +27,6 @@ RUN pip install -r requirements.txt
 
 EXPOSE 8000
 
-CMD ["gunicorn", "-w", "3", "-t", "60", "-b", "0.0.0.0:8000", "swiftform.app:create_app()"]
+RUN chmod +x /home/sf/app/docker/python/start.sh
+
+ENTRYPOINT [ "/bin/sh", "/home/sf/app/docker/python/start.sh" ]
