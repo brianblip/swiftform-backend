@@ -1,4 +1,11 @@
 from flask import Flask, jsonify
+from dotenv import load_dotenv
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
+import os
+
+class Base(DeclarativeBase):
+  pass
 
 def create_app(settings_override=None):
     """
@@ -7,7 +14,14 @@ def create_app(settings_override=None):
     :param settings_override: Override settings
     :return: Flask app
     """
+
+    load_dotenv()
+
     app = Flask(__name__)
+    app.config.from_object("swiftform.config.Config")
+
+    db = SQLAlchemy(model_class=Base)
+    db.init_app(app)
 
     # todo: settings not working atm, need to propery configure env variables
     # app.config.from_object("config.settings")
@@ -22,13 +36,3 @@ def create_app(settings_override=None):
         return jsonify({"message": "Welcome to my API!"})
 
     return app
-
-
-
-
-
-
-
-
-
-

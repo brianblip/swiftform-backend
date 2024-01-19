@@ -1,9 +1,12 @@
 FROM python:3.12.1-alpine
 
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
 RUN pip install --upgrade pip
 
 RUN apk update \
-    apk add curl
+    && apk add curl
 
 RUN adduser -D sf
 RUN mkdir -p /home/sf/app && chown -R sf:sf /home/sf/app
@@ -15,13 +18,10 @@ USER sf
 
 COPY --chown=sf:sf . .
 
-ENV VIRTUAL_ENV=/home/sf/.venv
-
-RUN python -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-RUN export FLASK_APP=app.py
 RUN pip install -r requirements.txt
 
 EXPOSE 8000
 
-CMD ["gunicorn", "-w", "3", "-t", "60", "-b", "0.0.0.0:8000", "swiftform.app:create_app()"]
+RUN chmod +x /home/sf/app/docker/python/start.sh
+
+ENTRYPOINT [ "/bin/sh", "/home/sf/app/docker/python/start.sh" ]
