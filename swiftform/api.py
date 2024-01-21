@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify, abort
-from swiftform.models import User
+from swiftform.models import User, TokenBlocklist
 from swiftform.app import db
 
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, jwt_required, current_user
+from flask_jwt_extended import create_access_token, jwt_required, current_user, get_jwt
+from datetime import datetime, timezone
 
 api = Blueprint('api', __name__)
 
@@ -72,6 +73,23 @@ def login_user():
         raise e
 
     return jsonify({'data': {'access_token': access_token}})
+
+@api.route("/api/v1/auth/logout", methods=["POST"])
+@jwt_required()
+def logout_user():
+      jti = get_jwt()["jti"]
+      now = datetime.now(timezone.utc)
+
+      try:
+        db.session.add(TokenBlocklist(jti=jti, created_at=now))
+        db.session.commit()
+      except Exception as e:
+        db.session.rollback()
+        raise e
+
+      return jsonify({
+          'message': 'Successfully logged out'
+      })
 
 
 
