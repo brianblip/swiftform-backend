@@ -12,6 +12,8 @@ class Config(object):
         "SERVER_NAME", "{0}:{1}".format(os.getenv("FLASK_HOST", "localhost"), os.getenv("FLASK_PORT", "8000"))
     )
 
+    JWT_SECRET_KEY = 'F4sEgwb7EOxnKEyjzFCHves7G3T7GRIC0xbHQSiPtJg'
+
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "SQLALCHEMY_DATABASE_URI",
         "postgresql://{0}:{1}@{2}:{3}/{4}".
