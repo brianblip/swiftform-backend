@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from flask_jwt_extended import JWTManager
+from swiftform.error_handlers import handle_exception
 
 class Base(DeclarativeBase):
   pass
@@ -27,6 +28,8 @@ def create_app():
 
     from swiftform.api import api    
     app.register_blueprint(api)
+
+    app.register_error_handler(Exception, handle_exception)
 
     # Define a route for the API
     @app.route('/', methods=['GET'])
