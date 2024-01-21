@@ -2,11 +2,13 @@ from flask import Flask, jsonify
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
+from flask_jwt_extended import JWTManager
 
 class Base(DeclarativeBase):
   pass
 
 db = SQLAlchemy(model_class=Base)
+jwt = JWTManager()
 
 def create_app():
     """
@@ -21,6 +23,7 @@ def create_app():
     app.config.from_object("swiftform.config.Config")
     
     db.init_app(app)
+    jwt.init_app(app)
 
     from swiftform.api import api    
     app.register_blueprint(api)
