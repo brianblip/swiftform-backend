@@ -7,6 +7,13 @@ from flask_jwt_extended import create_access_token, jwt_required, current_user
 
 api = Blueprint('api', __name__)
 
+
+
+# ========== AUTH ENDPOINTS ==========
+
+
+
+
 @api.route('/api/v1/auth/register', methods=['POST'])
 def register_user():
     name = request.json.get('name')
@@ -65,6 +72,14 @@ def login_user():
         raise e
 
     return jsonify({'data': {'access_token': access_token}})
+
+
+
+
+# ========== USER ENDPOINTS ==========
+
+
+
 
 @api.route("/api/v1/users/me", methods=["GET"])
 @jwt_required()
