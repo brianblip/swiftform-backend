@@ -17,7 +17,6 @@ from swiftform.error_handlers import (
 from flask_cors import CORS
 from datetime import timedelta, datetime, timezone
 
-
 class Base(DeclarativeBase):
     pass
 
