@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, abort
 from swiftform.models import User
 from swiftform.app import db
 
@@ -18,9 +18,8 @@ def register_user():
         user = User.query.filter_by(email=email).first()
 
         if user:
-            return jsonify({
-                'message': 'User already exists'
-            }), 400
+            abort(400, description='User already exists')
+
     except Exception as e:
         raise e
 
