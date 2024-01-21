@@ -3,7 +3,7 @@ from swiftform.models import User
 from swiftform.app import db
 
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, current_user
 
 api = Blueprint('api', __name__)
 
@@ -65,5 +65,17 @@ def login_user():
         raise e
 
     return jsonify({'data': {'access_token': access_token}})
+
+@api.route("/api/v1/users/me", methods=["GET"])
+@jwt_required()
+def get_currently_logged_inuser():
+    return jsonify({
+      'data': {
+        'id': current_user.id,
+        'name': current_user.name,
+        'email': current_user.email,
+        'avatar_url': current_user.avatar_url
+      }
+    })
     
     
