@@ -19,7 +19,6 @@ def register_user():
 
         if user:
             abort(400, description='User already exists')
-
     except Exception as e:
         raise e
 
@@ -57,7 +56,6 @@ def login_user():
 
       if not user or not check_password_hash(user.password, password):
         abort(401, description='Invalid email or password')
-    
     except Exception as e:
       raise e
        
