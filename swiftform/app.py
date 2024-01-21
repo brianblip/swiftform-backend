@@ -2,7 +2,6 @@ from flask import Flask, jsonify
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
-import os
 
 class Base(DeclarativeBase):
   pass
