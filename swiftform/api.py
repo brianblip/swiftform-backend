@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, abort
 from swiftform.models import User
 from swiftform.app import db
 
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
 
 api = Blueprint('api', __name__)
@@ -46,5 +46,26 @@ def register_user():
             'access_token': access_token,
         }
     })
+
+@api.route("/api/v1/auth/login", methods=["POST"])
+def login_user():
+    email = request.json.get('email')
+    password = request.json.get('password')
+
+    try:
+      user = User.query.filter_by(email=email).first()
+
+      if not user or not check_password_hash(user.password, password):
+        abort(401, description='Invalid email or password')
+    
+    except Exception as e:
+      raise e
+       
+    try:
+        access_token = create_access_token(identity=user)
+    except Exception as e:
+        raise e
+
+    return jsonify({'data': {'access_token': access_token}})
     
     
