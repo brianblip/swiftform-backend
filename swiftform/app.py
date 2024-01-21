@@ -2,7 +2,6 @@ from flask import Flask, jsonify
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
-from swiftform.api import api
 
 class Base(DeclarativeBase):
   pass
@@ -23,7 +22,7 @@ def create_app():
     
     db.init_app(app)
 
-    
+    from swiftform.api import api    
     app.register_blueprint(api)
 
     # Define a route for the API
