@@ -6,6 +6,8 @@ from sqlalchemy.orm import DeclarativeBase
 class Base(DeclarativeBase):
   pass
 
+db = SQLAlchemy(model_class=Base)
+
 def create_app():
     """
     Create a Flask application using the app factory pattern.
@@ -18,7 +20,6 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object("swiftform.config.Config")
     
-    db = SQLAlchemy(model_class=Base)
     db.init_app(app)
 
     # Define a route for the API
