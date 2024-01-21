@@ -1,5 +1,5 @@
 import os
-from distutils.util import strtobool
+from swiftform.utils import strtobool
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
