@@ -58,7 +58,9 @@ def create_app():
             return response
 
     from swiftform.api.auth import auth
+    from swiftform.api import api
 
+    app.register_blueprint(api)
     app.register_blueprint(auth)
 
     from swiftform.api.users import users
