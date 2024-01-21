@@ -83,7 +83,7 @@ def login_user():
 
 @api.route("/api/v1/users/me", methods=["GET"])
 @jwt_required()
-def get_currently_logged_inuser():
+def get_currently_logged_in_user():
     return jsonify({
       'data': {
         'id': current_user.id,
