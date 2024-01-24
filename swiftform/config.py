@@ -16,11 +16,11 @@ class Config(object):
         "SQLALCHEMY_DATABASE_URI",
         "postgresql://{0}:{1}@{2}:{3}/{4}".
         format(
-            os.getenv("POSTGRES_USER"),
-            os.getenv("POSTGRES_PASSWORD"),
-            os.getenv("POSTGRES_HOST"),
-            os.getenv("POSTGRES_PORT"),
-            os.getenv("POSTGRES_DB"),
+            os.getenv("POSTGRES_USER") or 'sfuser',
+            os.getenv("POSTGRES_PASSWORD") or 'password',
+            os.getenv("POSTGRES_HOST") or 'swiftform-app',
+            os.getenv("POSTGRES_PORT") or 5432,
+            os.getenv("POSTGRES_DB") or 'db_swiftform',
         ),
     )
 
