@@ -6,16 +6,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, current_user, get_jwt
 from datetime import datetime, timezone
 
-api = Blueprint('api', __name__)
-
-
-
-# ========== AUTH ENDPOINTS ==========
+auth = Blueprint('auth', __name__)
 
 
 
 
-@api.route('/api/v1/auth/register', methods=['POST'])
+@auth.route('/api/v1/auth/register', methods=['POST'])
 def register_user():
     name = request.json.get('name')
     email = request.json.get('email')
@@ -54,7 +50,7 @@ def register_user():
         }
     })
 
-@api.route("/api/v1/auth/login", methods=["POST"])
+@auth.route("/api/v1/auth/login", methods=["POST"])
 def login_user():
     email = request.json.get('email')
     password = request.json.get('password')
@@ -74,7 +70,7 @@ def login_user():
 
     return jsonify({'data': {'access_token': access_token}})
 
-@api.route("/api/v1/auth/logout", methods=["POST"])
+@auth.route("/api/v1/auth/logout", methods=["POST"])
 @jwt_required()
 def logout_user():
       jti = get_jwt()["jti"]
@@ -90,25 +86,3 @@ def logout_user():
       return jsonify({
           'message': 'Successfully logged out'
       })
-
-
-
-
-# ========== USER ENDPOINTS ==========
-
-
-
-
-@api.route("/api/v1/users/me", methods=["GET"])
-@jwt_required()
-def get_currently_logged_in_user():
-    return jsonify({
-      'data': {
-        'id': current_user.id,
-        'name': current_user.name,
-        'email': current_user.email,
-        'avatar_url': current_user.avatar_url
-      }
-    })
-    
-    
