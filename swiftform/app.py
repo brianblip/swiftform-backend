@@ -26,8 +26,8 @@ def create_app():
     db.init_app(app)
     jwt.init_app(app)
 
-    from swiftform.api import api    
-    app.register_blueprint(api)
+    from swiftform.api.auth import auth
+    app.register_blueprint(auth)
 
     app.register_error_handler(Exception, handle_exception)
     app.register_error_handler(400, handle_bad_request)
