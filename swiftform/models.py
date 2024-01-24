@@ -43,3 +43,16 @@ def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
     token = db.session.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
 
     return token is not None
+
+class Form(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False)
+    updated_at = db.Column(db.DateTime, nullable=False)
+
+   
+
+
+    
