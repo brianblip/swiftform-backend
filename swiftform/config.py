@@ -22,7 +22,7 @@ class Config(object):
             os.getenv("POSTGRES_PASSWORD", "password"),
             os.getenv("POSTGRES_HOST", "swiftform_app"),
             os.getenv("POSTGRES_PORT", 5432),
-            os.getenv("POSTGRES_DB", "db_swiftform),
+            os.getenv("POSTGRES_DB", "db_swiftform"),
         ),
     )
 
