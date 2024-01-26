@@ -32,6 +32,9 @@ def create_app():
     from swiftform.api.users import users
     app.register_blueprint(users)
 
+    from swiftform.api.form import form
+    app.register_blueprint(form)
+
     app.register_error_handler(Exception, handle_exception)
     app.register_error_handler(400, handle_bad_request)
     app.register_error_handler(401, handle_unauthorized)
