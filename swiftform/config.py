@@ -19,6 +19,12 @@ class Config(object):
 
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 
+    OPEN_AI_ENABLED = os.getenv('OPEN_AI_ENABLED', 'false') == 'true'
+    OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', None)
+
+    if OPEN_AI_ENABLED and not OPENAI_API_KEY:
+        raise Exception('Error: OpenAI API key not configured.')
+
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "SQLALCHEMY_DATABASE_URI",
         "postgresql://{0}:{1}@{2}:{3}/{4}".format(
