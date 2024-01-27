@@ -8,6 +8,50 @@ Before running the application, you need to set up the necessary environment var
 
 There's a sample env file called `.env.example`. You can simply rename it to `.env`
 
+### Setting up the Environment
+
+1. **Create a virtual environment:**
+
+Use the following command to create a virtual environment named 'venv':
+
+```bash
+python -m venv venv
+```
+
+2. **Activate the virtual environment:**
+
+Activate the virtual environment with this command:
+
+```bash
+source venv/Scripts/activate
+```
+
+3. **Verify python version:**
+
+Ensure you are using Python 3.12 for this environment. You can check your Python version with:
+
+```
+python --version
+```
+
+The output should be Python 3.12.
+
+5. **Install required dependencies:**
+
+Install all necessary dependencies from the `requirements.txt` file:
+
+```
+pip install -r requirements.txt
+```
+
+### Start the flask application
+
+Run the Flask application using the following command:
+
+```bash
+flask run
+```
+
 ### Installing Docker
 
 Ensure Docker is installed on your system. If not, download and install it from the [official Docker website](https://docs.docker.com/engine/install/).
@@ -30,14 +74,6 @@ Run Alembic migrations to set up the database schema:
 
 ```
 alembic upgrade head
-```
-
-### Start the flask application
-
-Run the Flask application using the following command:
-
-```bash
-flask run
 ```
 
 ### Database Migrations with Alembic
