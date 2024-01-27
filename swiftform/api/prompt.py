@@ -3,11 +3,14 @@ from flask import request, jsonify, Blueprint, abort
 import os
 import json
 
+from flask_jwt_extended import jwt_required
+
 prompt = Blueprint('prompt', __name__)
 
 OPEN_AI_ENABLED = os.getenv('OPEN_AI_ENABLED', 'false') == 'true'
 
 @prompt.route("/api/v1/prompt", methods=["POST"])
+@jwt_required()
 def generate_prompt():
   if not OPEN_AI_ENABLED:
     return {
