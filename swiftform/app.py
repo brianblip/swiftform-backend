@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from flask_jwt_extended import JWTManager
-from swiftform.error_handlers import handle_exception, handle_bad_request, handle_unauthorized
+from swiftform.error_handlers import handle_exception, handle_bad_request, handle_unauthorized, handle_not_found
 
 class Base(DeclarativeBase):
   pass
@@ -38,6 +38,7 @@ def create_app():
     app.register_error_handler(Exception, handle_exception)
     app.register_error_handler(400, handle_bad_request)
     app.register_error_handler(401, handle_unauthorized)
+    app.register_error_handler(404, handle_not_found)
 
     # Define a route for the API
     @app.route('/', methods=['GET'])

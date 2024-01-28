@@ -15,3 +15,8 @@ def handle_exception(e):
   return jsonify({
         "message": str(e)
     }), 500
+
+def handle_not_found(e):
+  return jsonify({
+        "message": e.description
+    }), 404
