@@ -6,7 +6,14 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install --upgrade pip
 
 RUN apk update \
-    && apk add curl
+    && apk add curl \
+    && apk add py3-gunicorn \
+    && apk add py3-setuptools \
+    && apk add py3-flask-sqlalchemy \
+    && apk add py3-alembic \
+    && apk add py3-flask \
+    && apk add py3-dotenv \
+    && apk add py3-psycopg2
 
 RUN adduser -D sf
 RUN mkdir -p /home/sf/app && chown -R sf:sf /home/sf/app
@@ -17,8 +24,6 @@ WORKDIR /home/sf/app
 USER sf
 
 COPY --chown=sf:sf . .
-
-RUN pip install -r requirements.txt
 
 EXPOSE 8000
 
