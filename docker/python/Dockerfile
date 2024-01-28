@@ -3,8 +3,6 @@ FROM python:3.11.7-alpine
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN pip install --upgrade pip
-
 RUN apk update \
     && apk add curl \
     && apk add git \
