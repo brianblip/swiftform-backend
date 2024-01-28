@@ -2,6 +2,7 @@ FROM python:3.11.7-alpine
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV PYTHONPATH=/usr/lib/python3.11/site-packages/
 
 RUN apk update \
     && apk add curl \
