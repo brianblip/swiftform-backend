@@ -17,7 +17,7 @@ RUN apk update \
 # Install flask-jwt-extended
 RUN git clone https://github.com/vimalloc/flask-jwt-extended.git \
     && cd flask-jwt-extended \
-    && python setup.py install
+    && python setup.py install --prefix /usr
 
 RUN adduser -D sf
 RUN mkdir -p /home/sf/app && chown -R sf:sf /home/sf/app
