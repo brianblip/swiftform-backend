@@ -7,6 +7,7 @@ RUN pip install --upgrade pip
 
 RUN apk update \
     && apk add curl \
+    && apk add git \
     && apk add py3-gunicorn \
     && apk add py3-setuptools \
     && apk add py3-flask-sqlalchemy \
