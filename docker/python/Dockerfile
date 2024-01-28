@@ -16,6 +16,11 @@ RUN apk update \
     && apk add py3-dotenv \
     && apk add py3-psycopg2
 
+# Install flask-jwt-extended
+RUN git clone https://github.com/vimalloc/flask-jwt-extended.git \
+    && cd flask-jwt-extended \
+    && python setup.py install
+
 RUN adduser -D sf
 RUN mkdir -p /home/sf/app && chown -R sf:sf /home/sf/app
 RUN mkdir -p /var/log/flask-app && touch /var/log/flask-app/flask-app.err.log && touch /var/log/flask-app/flask-app.out.log
