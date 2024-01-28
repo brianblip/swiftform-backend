@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, abort
 from swiftform.models import Form
 from swiftform.app import db
 from flask_jwt_extended import jwt_required, current_user
@@ -52,22 +52,39 @@ def get_form(form_id):
 @form.route('/api/v1/forms/<int:form_id>', methods=['PUT'])
 @jwt_required()
 def update_form(form_id):
-    form = Form.query.get(form_id)
-    if form is None:
-        return jsonify({'error': 'Form not found'}), 404
+    try:
+        form = Form.query.get(form_id)
+        if form is None:
+            abort(404, description='Form not found')
+    except Exception as e:
+        raise e
 
     user_id = current_user.id
     
     if form.user_id != user_id:
-        return jsonify({'error': 'You are not authorized to update this form'}), 403
+        abort(403, description='You are not authorized to update this form')
 
     data = request.json
-    form.name = data.get('name', form.name)
-    form.description = data.get('description', form.description)
-    form.updated_at = data.get('updated_at', form.updated_at)
 
-    db.session.commit()
-    return jsonify({'message': 'Form updated successfully'}), 200
+    try:
+        # validate minlength of form name
+        form.name = data.get('name', form.name)
+        form.description = data.get('description', form.description)
+        # form.updated_at should be handled by the backend
+        form.updated_at = data.get('updated_at', form.updated_at)
+
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        raise e
+    
+    return jsonify({'data': {
+        'name': form.name,
+        'description': form.description,
+        'user_id': form.user_id,
+        'created_at': form.created_at,
+        'updated_at': form.updated_at
+    }}), 200
 
 @form.route('/api/v1/forms/<int:form_id>', methods=['DELETE'])
 @jwt_required()
