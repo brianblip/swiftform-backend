@@ -13,7 +13,8 @@ RUN apk update \
     && apk add py3-alembic \
     && apk add py3-flask \
     && apk add py3-dotenv \
-    && apk add py3-psycopg2
+    && apk add py3-psycopg2 \
+    && apk add py3-flask-cors
 
 # Install flask-jwt-extended
 RUN git clone https://github.com/vimalloc/flask-jwt-extended.git \
