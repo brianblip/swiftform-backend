@@ -18,16 +18,19 @@ def create_form():
     # Get the user ID of the currently logged-in user
     user_id = current_user.id
 
-    new_form = Form(
-        name=data['name'],
-        description=data['description'],
-        user_id=user_id,
-        created_at=func.now(),
-        updated_at=func.now()
-    )
+    try:
+        new_form = Form(
+            name=data['name'],
+            description=data['description'],
+            user_id=user_id
+        )
 
-    db.session.add(new_form)
-    db.session.commit()
+        db.session.add(new_form)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        raise e
+    
     # Convert the new_form object to a dictionary so it can be returned as JSON
     form_dict = {
         'id': new_form.id,
@@ -35,9 +38,11 @@ def create_form():
         'description': new_form.description,
         'user_id': new_form.user_id,
         'created_at': new_form.created_at,
+        'updated_at': new_form.updated_at
     }
 
     return jsonify(form_dict), 201
+
 
 
 @form.route('/api/v1/forms/<int:form_id>', methods=['GET'])
