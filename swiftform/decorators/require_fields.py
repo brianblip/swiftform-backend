@@ -26,7 +26,7 @@ def require_fields(required_fields):
             ]
             if missing_fields:
                 description = f"Missing required fields: {', '.join(missing_fields)}"
-                abort(400, description=description)
+                abort(422, description=description)
             else:
                 return func(*args, **kwargs)
 
