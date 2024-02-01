@@ -3,7 +3,7 @@ from swiftform.models import User, TokenBlocklist
 from swiftform.app import db
 
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, jwt_required, current_user, get_jwt
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt
 from datetime import datetime, timezone
 
 auth = Blueprint('auth', __name__)
