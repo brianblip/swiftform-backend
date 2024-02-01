@@ -44,6 +44,7 @@ def create_app():
     app.register_blueprint(users)
 
     from swiftform.api.prompt import prompt
+
     app.register_blueprint(prompt)
 
     app.register_error_handler(Exception, handle_exception)

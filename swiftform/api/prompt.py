@@ -4,31 +4,31 @@ import json
 
 from flask_jwt_extended import jwt_required
 
-prompt = Blueprint('prompt', __name__)
+prompt = Blueprint("prompt", __name__)
+
 
 @prompt.route("/api/v1/prompt", methods=["POST"])
 @jwt_required()
 def generate_prompt():
-  try:
-    text = request.json.get('text', None)
+    try:
+        text = request.json.get("text", None)
 
-    if not text:
-      abort(400, description='Missing required parameter: text')
+        if not text:
+            abort(400, description="Missing required parameter: text")
 
-    openai_response = json.loads(get_completion(create_prompt(text)))
+        openai_response = json.loads(get_completion(create_prompt(text)))
 
-    return jsonify({
-      'data': openai_response
-    })
-  except Exception as e:
-    raise e
- 
-    
+        return jsonify({"data": openai_response})
+    except Exception as e:
+        raise e
+
+
 client = OpenAI()
-    
+
+
 # give instructions to llm on how to complete the task based on the text provided
 def create_prompt(text):
-  prompt = f"""
+    prompt = f"""
     You will be provided with text delimited by triple backticks.
     This text will describe a form that you need to help create.
     Your task is to provide an array of objects in JSON format.
@@ -52,93 +52,81 @@ def create_prompt(text):
 
     ```{text}```
     """
-  
-  return prompt
+
+    return prompt
+
 
 # returns the response from llm based on the prompt provided
 def get_completion(prompt, model="gpt-3.5-turbo"):
-  messages = [{"role": "user", "content": prompt}]
-  response =  client.chat.completions.create(
-    model=model,
-    messages=messages,
-    temperature=0
-  )
-  
-  return response.choices[0].message.content
+    messages = [{"role": "user", "content": prompt}]
+    response = client.chat.completions.create(
+        model=model, messages=messages, temperature=0
+    )
+
+    return response.choices[0].message.content
+
 
 # dummy response for when openai is disabled
 OPEN_AI_DUMMY_RESPONSE = [
-        {
-            "label": "Username",
-            "name": "username",
-            "type": "text",
-            "validations": [
-                {
-                    "message": "Username is required",
-                    "type": "required",
-                    "value": True
-                },
-                {
-                    "message": "Username must be at least 6 characters long",
-                    "type": "minLength",
-                    "value": 6
-                },
-                {
-                    "message": "Username cannot exceed 20 characters",
-                    "type": "maxLength",
-                    "value": 20
-                }
-            ]
-        },
-        {
-            "label": "Email",
-            "name": "email",
-            "type": "email",
-            "validations": [
-                {
-                    "message": "Email is required",
-                    "type": "required",
-                    "value": True
-                },
-                {
-                    "message": "Invalid email format",
-                    "type": "pattern",
-                    "value": "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$"
-                }
-            ]
-        },
-        {
-            "label": "Password",
-            "name": "password",
-            "type": "password",
-            "validations": [
-                {
-                    "message": "Password is required",
-                    "type": "required",
-                    "value": True
-                },
-                {
-                    "message": "Password must be at least 8 characters long",
-                    "type": "minLength",
-                    "value": 8
-                }
-            ]
-        },
-        {
-            "label": "Confirm Password",
-            "name": "confirmPassword",
-            "type": "password",
-            "validations": [
-                {
-                    "message": "Confirm Password is required",
-                    "type": "required",
-                    "value": True
-                },
-                {
-                    "message": "Confirm Password must be at least 8 characters long",
-                    "type": "minLength",
-                    "value": 8
-                }
-            ]
-        }
-    ]
+    {
+        "label": "Username",
+        "name": "username",
+        "type": "text",
+        "validations": [
+            {"message": "Username is required", "type": "required", "value": True},
+            {
+                "message": "Username must be at least 6 characters long",
+                "type": "minLength",
+                "value": 6,
+            },
+            {
+                "message": "Username cannot exceed 20 characters",
+                "type": "maxLength",
+                "value": 20,
+            },
+        ],
+    },
+    {
+        "label": "Email",
+        "name": "email",
+        "type": "email",
+        "validations": [
+            {"message": "Email is required", "type": "required", "value": True},
+            {
+                "message": "Invalid email format",
+                "type": "pattern",
+                "value": "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$",
+            },
+        ],
+    },
+    {
+        "label": "Password",
+        "name": "password",
+        "type": "password",
+        "validations": [
+            {"message": "Password is required", "type": "required", "value": True},
+            {
+                "message": "Password must be at least 8 characters long",
+                "type": "minLength",
+                "value": 8,
+            },
+        ],
+    },
+    {
+        "label": "Confirm Password",
+        "name": "confirmPassword",
+        "type": "password",
+        "validations": [
+            {
+                "message": "Confirm Password is required",
+                "type": "required",
+                "value": True,
+            },
+            {
+                "message": "Confirm Password must be at least 8 characters long",
+                "type": "minLength",
+                "value": 8,
+            },
+        ],
+    },
+]
