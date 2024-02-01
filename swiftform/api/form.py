@@ -12,8 +12,8 @@ def create_form():
     data = request.json
 
     # validate minlength of form name
-    if len(data.get('name', '')) < 5:
-        abort(400, description='Form name must be at least 5 characters long')
+    if len(data.get('name', '')) < 2:
+        abort(400, description='Form name must be at least 2 characters long')
 
     # Get the user ID of the currently logged-in user
     user_id = current_user.id
