@@ -107,3 +107,31 @@ alembic downgrade -1
 ```
 
 Running this command will undo the changes introduced by the last migration, effectively rolling back your database schema to the state it was in before the last migration was applied. Be cautious when using downgrade, as it can lead to data loss if not handled carefully.
+
+### Formatting and Linting Files
+
+We use [ruff](https://docs.astral.sh/ruff/) for linting and formatting. [pre-commit](https://pre-commit.com/) is used to automate the running of `ruff` checks before each commit.
+
+#### How to Use
+
+Before your first commit, ensure you have `pre-commit` installed and the hooks set up by running:
+
+```bash
+pre-commit install
+```
+
+After installation, it should automatically address issues before commits are finalized.
+
+#### Manually Running Checks
+
+To manually run all configured pre-commit checks on all files:
+
+```bash
+pre-commit run --all-files
+```
+
+Alernatively, if you're interested in obtaining more detailed information about linting errors, you can run the following command:
+
+```bash
+ruff check .
+```
