@@ -1,12 +1,25 @@
-FROM python:3.12.1-alpine
+FROM python:3.11.7-alpine
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-
-RUN pip install --upgrade pip
+ENV PYTHONPATH=/usr/lib/python3.11/site-packages/
 
 RUN apk update \
-    && apk add curl
+    && apk add curl \
+    && apk add git \
+    && apk add py3-gunicorn \
+    && apk add py3-setuptools \
+    && apk add py3-flask-sqlalchemy \
+    && apk add py3-alembic \
+    && apk add py3-flask \
+    && apk add py3-dotenv \
+    && apk add py3-psycopg2 \
+    && apk add py3-flask-cors
+
+# Install flask-jwt-extended
+RUN git clone https://github.com/vimalloc/flask-jwt-extended.git \
+    && cd flask-jwt-extended \
+    && python setup.py install --prefix /usr
 
 RUN adduser -D sf
 RUN mkdir -p /home/sf/app && chown -R sf:sf /home/sf/app
@@ -17,8 +30,6 @@ WORKDIR /home/sf/app
 USER sf
 
 COPY --chown=sf:sf . .
-
-RUN pip install -r requirements.txt
 
 EXPOSE 8000
 
