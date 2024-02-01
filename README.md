@@ -129,3 +129,9 @@ To manually run all configured pre-commit checks on all files:
 ```bash
 pre-commit run --all-files
 ```
+
+Alernatively, if you're interested in obtaining more detailed information about linting errors, you can run the following command:
+
+```bash
+ruff check .
+```
