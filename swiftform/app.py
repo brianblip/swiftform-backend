@@ -3,13 +3,21 @@ from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from flask_jwt_extended import JWTManager
-from swiftform.error_handlers import handle_exception, handle_bad_request, handle_unauthorized, handle_not_found
+from swiftform.error_handlers import (
+    handle_exception,
+    handle_bad_request,
+    handle_unauthorized,
+)
+from flask_cors import CORS
+
 
 class Base(DeclarativeBase):
-  pass
+    pass
+
 
 db = SQLAlchemy(model_class=Base)
 jwt = JWTManager()
+
 
 def create_app():
     """
@@ -26,9 +34,11 @@ def create_app():
     jwt.init_app(app)
   
     from swiftform.api.auth import auth
+
     app.register_blueprint(auth)
 
     from swiftform.api.users import users
+
     app.register_blueprint(users)
 
     from swiftform.api.form import form
@@ -40,7 +50,7 @@ def create_app():
     app.register_error_handler(404, handle_not_found)
 
     # Define a route for the API
-    @app.route('/', methods=['GET'])
+    @app.route("/", methods=["GET"])
     def index():
         # You can return any data structure that jsonify can handle.
         return jsonify({"message": "Welcome to my API!"})

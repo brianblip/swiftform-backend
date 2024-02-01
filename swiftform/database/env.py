@@ -15,13 +15,14 @@ config = context.config
 # This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
-    
+
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from swiftform.models import *
 from swiftform.app import db
+
 target_metadata = db.metadata
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -29,18 +30,19 @@ target_metadata = db.metadata
 # ... etc.
 
 DATABASE_URI = os.getenv(
-        "SQLALCHEMY_DATABASE_URI",
-        "postgresql://{0}:{1}@{2}:{3}/{4}".
-        format(
-            os.getenv("POSTGRES_USER") or 'sfuser',
-            os.getenv("POSTGRES_PASSWORD") or 'password',
-            os.getenv("POSTGRES_HOST") or 'swiftform-app',
-            os.getenv("POSTGRES_PORT") or 5432,
-            os.getenv("POSTGRES_DB") or 'db_swiftform',
-        ),
-    )
+    "SQLALCHEMY_DATABASE_URI",
+    "postgresql://{0}:{1}@{2}:{3}/{4}".format(
+        os.getenv("POSTGRES_USER") or "sfuser",
+        os.getenv("POSTGRES_PASSWORD") or "password",
+        os.getenv("POSTGRES_HOST") or "swiftform-app",
+        os.getenv("POSTGRES_PORT") or 5432,
+        os.getenv("POSTGRES_DB") or "db_swiftform",
+    ),
+)
 
-config.set_main_option('sqlalchemy.url', DATABASE_URI)
+config.set_main_option("sqlalchemy.url", DATABASE_URI)
+
+
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
     This configures the context with just a URL
@@ -59,6 +61,8 @@ def run_migrations_offline() -> None:
     )
     with context.begin_transaction():
         context.run_migrations()
+
+
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
     In this scenario we need to create an Engine
@@ -70,11 +74,11 @@ def run_migrations_online() -> None:
         poolclass=pool.NullPool,
     )
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():
             context.run_migrations()
+
+
 if context.is_offline_mode():
     run_migrations_offline()
 else:

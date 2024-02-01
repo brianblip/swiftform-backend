@@ -1,6 +1,7 @@
 from swiftform.app import db, jwt
 from datetime import datetime
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
@@ -15,6 +16,7 @@ class User(db.Model):
 def user_identity_lookup(user):
     return user.id
 
+
 # Register a callback function that loads a user from your database whenever
 # a protected route is accessed. This should return any python object on a
 # successful lookup, or None if the lookup failed for any reason (for example
@@ -23,6 +25,7 @@ def user_identity_lookup(user):
 def user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
     return User.query.filter_by(id=identity).one_or_none()
+
 
 # This could be expanded to fit the needs of your application. For example,
 # it could track who revoked a JWT, when a token expires, notes for why a
@@ -36,6 +39,7 @@ class TokenBlocklist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     jti = db.Column(db.String(36), nullable=False, index=True)
     created_at = db.Column(db.DateTime, nullable=False)
+
 
 # Callback function to check if a JWT exists in the database blocklist
 @jwt.token_in_blocklist_loader
