@@ -4,7 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from flask_jwt_extended import JWTManager
 from swiftform.error_handlers import handle_exception, handle_bad_request, handle_unauthorized
-from flask_cors import CORS
 
 class Base(DeclarativeBase):
   pass
@@ -26,13 +25,15 @@ def create_app():
     
     db.init_app(app)
     jwt.init_app(app)
-    CORS(app)
 
     from swiftform.api.auth import auth
     app.register_blueprint(auth)
 
     from swiftform.api.users import users
     app.register_blueprint(users)
+
+    from swiftform.api.notification import notification
+    app.register_blueprint(notification)
 
     app.register_error_handler(Exception, handle_exception)
     app.register_error_handler(400, handle_bad_request)
