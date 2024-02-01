@@ -1,6 +1,7 @@
 from flask import request, abort
 from functools import wraps
 
+
 def require_fields(required_fields):
     """
     Decorator to ensure that specific fields are present in a JSON request.
@@ -16,16 +17,19 @@ def require_fields(required_fields):
     a 400 Bad Request error response. If all required fields are present, it allows the original view
     function to process the request normally.
     """
+
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            missing_fields = [field for field in required_fields if field not in request.json]
+            missing_fields = [
+                field for field in required_fields if field not in request.json
+            ]
             if missing_fields:
                 description = f"Missing required fields: {', '.join(missing_fields)}"
                 abort(400, description=description)
             else:
                 return func(*args, **kwargs)
-            
+
         return wrapper
-    
+
     return decorator
