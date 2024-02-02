@@ -36,8 +36,8 @@ def create_form():
         "name": new_form.name,
         "description": new_form.description,
         "user_id": new_form.user_id,
-        'created_at': new_form.created_at,
-        'updated_at': new_form.updated_at
+        "created_at": new_form.created_at,
+        "updated_at": new_form.updated_at,
     }
 
     return jsonify(form_dict), 201
@@ -61,8 +61,8 @@ def get_form(form_id):
         "name": form.name,
         "description": form.description,
         "user_id": form.user_id,
-        'created_at': form.created_at,
-        'updated_at': form.updated_at
+        "created_at": form.created_at,
+        "updated_at": form.updated_at,
     }
     return jsonify(form_data), 200
 
@@ -102,7 +102,7 @@ def update_form(form_id):
         "id": form.id,
         "name": form.name,
         "description": form.description,
-        "user_id": form.user_id
+        "user_id": form.user_id,
     }
     return jsonify(form_data), 200
 
@@ -110,15 +110,22 @@ def update_form(form_id):
 @form.route("/api/v1/forms/<int:form_id>", methods=["DELETE"])
 @jwt_required()
 def delete_form(form_id):
-    form = Form.query.get(form_id)
+    try:
+        form = Form.query.get(form_id)
+    except Exception as e:
+        raise e
+
     if form is None:
-       abort(404, description="Form not found")
+        abort(404, description="Form not found")
 
-    user_id = current_user.id
-
-    if form.user_id != user_id:
+    if form.user_id != current_user.id:
         abort(403, description="You are not authorized to delete this form")
 
-    db.session.delete(form)
-    db.session.commit()
+    try:
+        db.session.delete(form)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        raise e
+
     return jsonify({"message": "Form deleted successfully"}), 200
