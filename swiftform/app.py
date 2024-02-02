@@ -7,6 +7,7 @@ from swiftform.error_handlers import (
     handle_exception,
     handle_bad_request,
     handle_unauthorized,
+    handle_not_found,
 )
 from flask_cors import CORS
 
@@ -32,7 +33,8 @@ def create_app():
     app.config.from_object("swiftform.config.Config")
     db.init_app(app)
     jwt.init_app(app)
-  
+    CORS(app)
+
     from swiftform.api.auth import auth
 
     app.register_blueprint(auth)
@@ -42,6 +44,7 @@ def create_app():
     app.register_blueprint(users)
 
     from swiftform.api.form import form
+
     app.register_blueprint(form)
 
     app.register_error_handler(Exception, handle_exception)
