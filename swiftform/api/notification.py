@@ -11,11 +11,9 @@ notification = Blueprint("notification", __name__)
 def create_notification():
     data = request.json
 
-    user_id = current_user.id
-
     try:
         new_notification = Notification(
-            title=data["title"], message=data["message"], recipient_id=user_id
+            title=data["title"], message=data["message"], recipient_id=current_user.id
         )
 
         db.session.add(new_notification)
@@ -38,9 +36,7 @@ def create_notification():
 @notification.route("/api/v1/notifications", methods=["GET"])
 @jwt_required()
 def get_notifications():
-    user_id = current_user.id
-
-    notifications = Notification.query.filter_by(recipient_id=user_id).all()
+    notifications = Notification.query.filter_by(recipient_id=current_user.id).all()
 
     notification_list = []
     for notification in notifications:
