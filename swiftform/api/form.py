@@ -16,12 +16,9 @@ def create_form():
     if len(data.get("name", "")) < 2:
         abort(400, description="Form name must be at least 2 characters long")
 
-    # Get the user ID of the currently logged-in user
-    user_id = current_user.id
-
     try:
         new_form = Form(
-            name=data["name"], description=data["description"], user_id=user_id
+            name=data["name"], description=data["description"], user_id=current_user.id
         )
 
         db.session.add(new_form)
@@ -50,10 +47,8 @@ def get_form(form_id):
     if form is None:
         abort(404, description="Form not found")
 
-    user_id = current_user.id
-
     # Check if the logged-in user is the creator of the form
-    if form.user_id != user_id:
+    if form.user_id != current_user.id:
         abort(403, description="You are not authorized to view this form")
 
     form_data = {
@@ -77,9 +72,7 @@ def update_form(form_id):
     except Exception as e:
         raise e
 
-    user_id = current_user.id
-
-    if form.user_id != user_id:
+    if form.user_id != current_user.id:
         abort(403, description="You are not authorized to update this form")
 
     data = request.json
