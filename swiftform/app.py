@@ -8,7 +8,6 @@ from swiftform.error_handlers import (
     handle_bad_request,
     handle_unauthorized,
 )
-from flask_cors import CORS
 
 
 class Base(DeclarativeBase):
@@ -43,6 +42,7 @@ def create_app():
     app.register_blueprint(users)
 
     from swiftform.api.notification import notification
+
     app.register_blueprint(notification)
 
     app.register_error_handler(Exception, handle_exception)
