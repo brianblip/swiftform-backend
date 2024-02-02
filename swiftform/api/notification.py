@@ -1,6 +1,5 @@
-from flask import Blueprint, jsonify, request, abort
+from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, current_user
-from datetime import datetime
 from swiftform.models import Notification
 from swiftform.app import db
 
@@ -54,4 +53,4 @@ def get_notifications():
             }
         )
 
-    return jsonify(notification_list), 200  
+    return jsonify(notification_list), 200
