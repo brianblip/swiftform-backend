@@ -36,7 +36,10 @@ def create_notification():
 @notification.route("/api/v1/notifications", methods=["GET"])
 @jwt_required()
 def get_notifications():
-    notifications = Notification.query.filter_by(recipient_id=current_user.id).all()
+    try:
+        notifications = Notification.query.filter_by(recipient_id=current_user.id).all()
+    except Exception as e:
+        raise e
 
     notification_list = []
     for notification in notifications:
