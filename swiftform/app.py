@@ -40,7 +40,7 @@ def create_app():
 
     db.init_app(app)
     jwt.init_app(app)
-    CORS(app)
+    CORS(app, supports_credentials=True)
 
     # Using an `after_request` callback, we refresh any token that is within 30 minutes of expiring.
     @app.after_request
