@@ -50,7 +50,10 @@ def register_user():
     response = jsonify(
         {
             "data": {
-                "access_token": access_token,
+                "id": new_user.id,
+                "name": new_user.name,
+                "email": new_user.email,
+                "avatar_url": new_user.avatar_url,
             }
         }
     )
@@ -77,7 +80,16 @@ def login_user():
     except Exception as e:
         raise e
 
-    response = jsonify({"data": {"access_token": access_token}})
+    response = jsonify(
+        {
+            "data": {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "avatar_url": user.avatar_url,
+            }
+        }
+    )
     set_access_cookies(response, access_token)
 
     return response
