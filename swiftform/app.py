@@ -9,6 +9,7 @@ from swiftform.error_handlers import (
     handle_unauthorized,
     handle_not_found,
 )
+from flask_cors import CORS
 
 
 class Base(DeclarativeBase):
@@ -32,6 +33,7 @@ def create_app():
     app.config.from_object("swiftform.config.Config")
     db.init_app(app)
     jwt.init_app(app)
+    CORS(app)
 
     from swiftform.api.auth import auth
 
