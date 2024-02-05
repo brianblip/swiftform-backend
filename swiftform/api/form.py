@@ -12,11 +12,9 @@ form = Blueprint("form", __name__)
 def create_form():
     data = request.json
 
-    # validate minlength of form name
     if len(data.get("name", "")) < 2:
         abort(400, description="Form name must be at least 2 characters long")
 
-    # Get the user ID of the currently logged-in user
     user_id = current_user.id
 
     try:
@@ -30,14 +28,13 @@ def create_form():
         db.session.rollback()
         raise e
 
-    # Convert the new_form object to a dictionary so it can be returned as JSON
     form_dict = {
         "id": new_form.id,
         "name": new_form.name,
         "description": new_form.description,
         "user_id": new_form.user_id,
-        'created_at': new_form.created_at,
-        'updated_at': new_form.updated_at
+        "created_at": new_form.created_at,
+        "updated_at": new_form.updated_at,
     }
 
     return jsonify(form_dict), 201
@@ -52,7 +49,6 @@ def get_form(form_id):
 
     user_id = current_user.id
 
-    # Check if the logged-in user is the creator of the form
     if form.user_id != user_id:
         abort(403, description="You are not authorized to view this form")
 
@@ -61,8 +57,8 @@ def get_form(form_id):
         "name": form.name,
         "description": form.description,
         "user_id": form.user_id,
-        'created_at': form.created_at,
-        'updated_at': form.updated_at
+        "created_at": form.created_at,
+        "updated_at": form.updated_at,
     }
     return jsonify(form_data), 200
 
@@ -85,7 +81,6 @@ def update_form(form_id):
     data = request.json
 
     try:
-        # validate minlength of form name
         if len(data.get("name", form.name)) < 2:
             abort(400, description="Form name must be at least 2 characters long")
 
@@ -102,7 +97,7 @@ def update_form(form_id):
         "id": form.id,
         "name": form.name,
         "description": form.description,
-        "user_id": form.user_id
+        "user_id": form.user_id,
     }
     return jsonify(form_data), 200
 
@@ -112,7 +107,7 @@ def update_form(form_id):
 def delete_form(form_id):
     form = Form.query.get(form_id)
     if form is None:
-       abort(404, description="Form not found")
+        abort(404, description="Form not found")
 
     user_id = current_user.id
 
