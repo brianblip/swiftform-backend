@@ -64,3 +64,4 @@ class Section(db.Model):
     form_id = db.Column(db.Integer, db.ForeignKey("form.id"), nullable=False)
     title = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
