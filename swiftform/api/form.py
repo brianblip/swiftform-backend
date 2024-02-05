@@ -16,7 +16,6 @@ def create_form():
     if len(data.get("name", "")) < 2:
         abort(400, description="Form name must be at least 2 characters long")
 
-    # Get the user ID of the currently logged-in user
     user_id = current_user.id
 
     try:
@@ -36,8 +35,8 @@ def create_form():
         "name": new_form.name,
         "description": new_form.description,
         "user_id": new_form.user_id,
-        'created_at': new_form.created_at,
-        'updated_at': new_form.updated_at
+        "created_at": new_form.created_at,
+        "updated_at": new_form.updated_at,
     }
 
     return jsonify(form_dict), 201
@@ -61,8 +60,8 @@ def get_form(form_id):
         "name": form.name,
         "description": form.description,
         "user_id": form.user_id,
-        'created_at': form.created_at,
-        'updated_at': form.updated_at
+        "created_at": form.created_at,
+        "updated_at": form.updated_at,
     }
     return jsonify(form_data), 200
 
@@ -102,7 +101,7 @@ def update_form(form_id):
         "id": form.id,
         "name": form.name,
         "description": form.description,
-        "user_id": form.user_id
+        "user_id": form.user_id,
     }
     return jsonify(form_data), 200
 
@@ -112,7 +111,7 @@ def update_form(form_id):
 def delete_form(form_id):
     form = Form.query.get(form_id)
     if form is None:
-       abort(404, description="Form not found")
+        abort(404, description="Form not found")
 
     user_id = current_user.id
 

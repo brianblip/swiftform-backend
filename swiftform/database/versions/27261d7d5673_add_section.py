@@ -26,6 +26,7 @@ def upgrade() -> None:
         sa.Column("form_id", sa.Integer(), nullable=False),
         sa.Column("title", sa.Text(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column("updated_at", sa.DateTime(), nullable=False),
         sa.ForeignKeyConstraint(
             ["form_id"],
             ["form.id"],
