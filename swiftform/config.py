@@ -1,5 +1,6 @@
 import os
 from swiftform.utils import strtobool
+from datetime import timedelta
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -28,3 +29,9 @@ class Config(object):
             os.getenv("POSTGRES_DB", "db_swiftform"),
         ),
     )
+
+    # If true this will only allow the cookies that contain your JWTs to be sent
+    # over https. In production, this should always be set to True
+    JWT_COOKIE_SECURE = False
+    JWT_TOKEN_LOCATION = ["cookies"]
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
