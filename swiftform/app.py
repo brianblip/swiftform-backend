@@ -13,6 +13,7 @@ from swiftform.error_handlers import (
     handle_exception,
     handle_bad_request,
     handle_unauthorized,
+    handle_not_found,
 )
 from flask_cors import CORS
 from datetime import timedelta, datetime, timezone
@@ -69,8 +70,13 @@ def create_app():
 
     app.register_blueprint(prompt)
 
+    from swiftform.api.notification import notification
+    
+    app.register_blueprint(notification)
+
     app.register_error_handler(Exception, handle_exception)
     app.register_error_handler(400, handle_bad_request)
     app.register_error_handler(401, handle_unauthorized)
+    app.register_error_handler(404, handle_not_found)
 
     return app
