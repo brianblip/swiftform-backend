@@ -14,19 +14,23 @@ def create_response():
 
     try:
         form = Form.query.get(form_id)
-        if form is None:
-            abort(404, description="Form not found")
+    except Exception as e:
+        db.session.rollback()
+        raise e
 
-        if form.user_id != current_user.id:
-            abort(
-                403,
-                description="You are not authorized to submit a response for this form",
-            )
+    if form is None:
+        abort(404, description="Form not found")
 
+    if form.user_id != current_user.id:
+        abort(
+            403,
+            description="You are not authorized to submit a response for this form",
+        )
+
+    try:
         response = Response(form_id=form_id, user_id=current_user.id)
         db.session.add(response)
         db.session.commit()
-
     except Exception as e:
         db.session.rollback()
         raise e
@@ -46,14 +50,23 @@ def create_response():
 def get_responses():
     form_id = request.args.get("form_id")
 
-    form = Form.query.get(form_id)
+    try:
+        form = Form.query.get(form_id)
+    except Exception as e:
+        db.session.rollback()
+        raise e
+
     if form is None:
         abort(404, description="Form not found")
 
     if form.user_id != current_user.id:
         abort(403, description="You are not authorized to view responses for this form")
 
-    responses = Response.query.filter_by(form_id=form_id).all()
+    try:
+        responses = Response.query.filter_by(form_id=form_id).all()
+    except Exception as e:
+        db.session.rollback()
+        raise e
 
     response_list = []
     for response in responses:
@@ -74,16 +87,23 @@ def get_responses():
 )
 @jwt_required()
 def delete_response(response_id):
-    response = Response.query.get(response_id)
+    try:
+        response = Response.query.get(response_id)
+    except Exception as e:
+        db.session.rollback()
+        raise e
+
     if response is None:
         abort(404, description="Response not found")
 
-    user_id = current_user.id
-
-    if response.user_id != user_id:
+    if response.user_id != current_user.id:
         abort(403, description="You are not authorized to delete this response")
 
-    db.session.delete(response)
-    db.session.commit()
+    try:
+        db.session.delete(response)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        raise e
 
     return jsonify({"message": "Response deleted successfully"}), 200
