@@ -12,9 +12,14 @@ def create_section():
     data = request.json
 
     # Chech if user is the owner of the form
-    form_id = request.args.get("form_id")
+    form_id = request.json.get("form_id")
 
-    form = Form.query.get(form_id)
+    try:
+        form = Form.query.get(form_id)
+    except Exception as e:
+        db.session.rollback()
+        raise e
+
     if form is None:
         abort(404, description="Form not found")
 
@@ -29,6 +34,7 @@ def create_section():
     except Exception as e:
         db.session.rollback()
         raise e
+
     return jsonify(
         {
             "id": new_section.id,
@@ -41,9 +47,15 @@ def create_section():
 @section.route("/api/v1/sections/<int:section_id>", methods=["GET"])
 @jwt_required()
 def get_section(section_id):
-    section = Section.query.get(section_id)
+    try:
+        section = Section.query.get(section_id)
+    except Exception as e:
+        db.session.rollback()
+        raise e
+
     if section is None:
         abort(404, description="Section not found")
+
     try:
         form = Form.query.get(section.form_id)
         if form.user_id != current_user.id:
@@ -65,19 +77,31 @@ def get_section(section_id):
 @jwt_required()
 def update_section(section_id):
     data = request.json
-    section = Section.query.get(section_id)
-    if section is None:
-        abort(404, description="Section not found")
+
     try:
-        form = Form.query.get(section.form_id)
-        if form.user_id != current_user.id:
-            abort(401, description="You are not the owner of this form")
+        section = Section.query.get(section_id)
     except Exception as e:
         db.session.rollback()
         raise e
 
-    section.title = data["title"]
-    db.session.commit()
+    if section is None:
+        abort(404, description="Section not found")
+
+    try:
+        form = Form.query.get(section.form_id)
+    except Exception as e:
+        db.session.rollback()
+        raise e
+
+    if form.user_id != current_user.id:
+        abort(401, description="You are not the owner of this form")
+
+    try:
+        section.title = data["title"]
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        raise e
 
     return jsonify(
         {
@@ -91,18 +115,29 @@ def update_section(section_id):
 @section.route("/api/v1/sections/<int:section_id>", methods=["DELETE"])
 @jwt_required()
 def delete_section(section_id):
-    section = Section.query.get(section_id)
-    if section is None:
-        abort(404, description="Section not found")
     try:
-        form = Form.query.get(section.form_id)
-        if form.user_id != current_user.id:
-            abort(401, description="You are not the owner of this form")
+        section = Section.query.get(section_id)
     except Exception as e:
         db.session.rollback()
         raise e
 
-    db.session.delete(section)
-    db.session.commit()
+    if section is None:
+        abort(404, description="Section not found")
+
+    try:
+        form = Form.query.get(section.form_id)
+    except Exception as e:
+        db.session.rollback()
+        raise e
+
+    if form.user_id != current_user.id:
+        abort(401, description="You are not the owner of this form")
+
+    try:
+        db.session.delete(section)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        raise e
 
     return jsonify({"message": "Section deleted"}), 200
