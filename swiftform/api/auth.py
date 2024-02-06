@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, abort
 from swiftform.models import User
 from swiftform.app import db
+from swiftform.decorators import require_fields
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import (
@@ -12,7 +13,10 @@ from flask_jwt_extended import (
 auth = Blueprint("auth", __name__)
 
 
-@auth.route("/api/v1/auth/register", methods=["POST"])
+
+
+@auth.route('/api/v1/auth/register', methods=['POST'])
+@require_fields(['name', 'email', 'password'])
 def register_user():
     name = request.json.get("name")
     email = request.json.get("email")
@@ -63,6 +67,7 @@ def register_user():
 
 
 @auth.route("/api/v1/auth/login", methods=["POST"])
+@require_fields(["email", "password"])
 def login_user():
     email = request.json.get("email")
     password = request.json.get("password")
