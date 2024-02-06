@@ -77,6 +77,10 @@ def create_app():
 
     app.register_blueprint(response)
 
+    from swiftform.api.notification import notification
+
+    app.register_blueprint(notification)
+
     app.register_error_handler(Exception, handle_exception)
     app.register_error_handler(400, handle_bad_request)
     app.register_error_handler(401, handle_unauthorized)
