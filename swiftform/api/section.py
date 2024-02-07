@@ -12,9 +12,13 @@ def create_section():
     data = request.json
 
     # Chech if user is the owner of the form
-    form_id = request.args.get("form_id")
+    form_id = request.json.get("form_id")
+    try:
+        form = Form.query.get(form_id)
+    except Exception as e:
+        db.session.rollback()
+        raise e
 
-    form = Form.query.get(form_id)
     if form is None:
         abort(404, description="Form not found")
 

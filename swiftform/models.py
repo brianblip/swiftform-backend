@@ -1,5 +1,6 @@
 from swiftform.app import db, jwt
 from datetime import datetime
+from enum import Enum
 
 
 class User(db.Model):
@@ -65,3 +66,27 @@ class Section(db.Model):
     title = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+
+class QuestionType(Enum):
+    TEXTFIELD = "textfield"
+    TEXTAREA = "textarea"
+    MULTIPLE_CHOICE = "multiple_choice"
+    CHECKBOX = "checkbox"
+    DROPDOWN = "dropdown"
+    ATTACHMENT = "attachment"
+    SLIDER = "slider"
+    DATE = "date"
+
+
+class Question(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    form_id = db.Column(db.Integer, db.ForeignKey("form.id"), nullable=False)
+    type = db.Column(db.Enum(QuestionType), nullable=False)
+    prompt = db.Column(db.Text, nullable=False)
+    section_id = db.Column(db.Integer, db.ForeignKey("section.id"))
+    is_required = db.Column(db.Boolean, nullable=False, default=False)
+    min = db.Column(db.Integer)
+    max = db.Column(db.Integer)
+    steps = db.Column(db.Integer)
+    order = db.Column(db.Integer, nullable=False, default=0)
