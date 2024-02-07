@@ -67,7 +67,12 @@ def get_form(form_id):
 
 @form.route("/api/v1/forms/<int:form_id>", methods=["PUT"])
 @jwt_required()
+@require_fields(["name"])
 def update_form(form_id):
+    data = request.json
+    name = data.get("name")
+    description = data.get("description", "")
+
     try:
         form = Form.query.get(form_id)
         if form is None:
@@ -78,16 +83,16 @@ def update_form(form_id):
     if form.user_id != current_user.id:
         abort(403, description="You are not authorized to update this form")
 
-    data = request.json
-
     try:
-        if len(data.get("name", form.name)) < 2:
+        if len(name) < 2:
             abort(400, description="Form name must be at least 2 characters long")
 
-        form.name = data.get("name", form.name)
-        form.description = data.get("description", form.description)
-        form.updated_at = datetime.now()
+        form.name = data.get("name")
 
+        if description:
+            form.description = description
+
+        form.updated_at = datetime.now()
         db.session.commit()
     except Exception as e:
         db.session.rollback()
