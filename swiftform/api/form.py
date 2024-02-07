@@ -3,21 +3,24 @@ from swiftform.models import Form
 from swiftform.app import db
 from flask_jwt_extended import jwt_required, current_user
 from datetime import datetime
+from swiftform.decorators import require_fields
 
 form = Blueprint("form", __name__)
 
 
 @form.route("/api/v1/forms", methods=["POST"])
 @jwt_required()
+@require_fields(["name"])
 def create_form():
     data = request.json
+    description = data.get("description", "")
 
     if len(data.get("name", "")) < 2:
         abort(400, description="Form name must be at least 2 characters long")
 
     try:
         new_form = Form(
-            name=data["name"], description=data["description"], user_id=current_user.id
+            name=data["name"], description=description, user_id=current_user.id
         )
 
         db.session.add(new_form)
