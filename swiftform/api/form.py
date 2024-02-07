@@ -13,15 +13,14 @@ form = Blueprint("form", __name__)
 @require_fields(["name"])
 def create_form():
     data = request.json
+    name = data.get("name")
     description = data.get("description", "")
 
-    if len(data.get("name", "")) < 2:
+    if len(name) < 2:
         abort(400, description="Form name must be at least 2 characters long")
 
     try:
-        new_form = Form(
-            name=data["name"], description=description, user_id=current_user.id
-        )
+        new_form = Form(name=name, description=description, user_id=current_user.id)
 
         db.session.add(new_form)
         db.session.commit()
