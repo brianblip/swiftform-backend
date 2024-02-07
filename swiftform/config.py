@@ -41,3 +41,6 @@ class Config(object):
     JWT_COOKIE_SECURE = False
     JWT_TOKEN_LOCATION = ["cookies"]
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
+
+    # todo: this should be True in production
+    JWT_COOKIE_CSRF_PROTECT = False
