@@ -30,14 +30,14 @@ def create_form():
 
     return jsonify(
         {
-            "id": form.id,
-            "name": form.name,
-            "description": form.description,
-            "user_id": form.user_id,
-            "created_at": form.created_at,
-            "updated_at": form.updated_at,
+            "id": new_form.id,
+            "name": new_form.name,
+            "description": new_form.description,
+            "user_id": new_form.user_id,
+            "created_at": new_form.created_at,
+            "updated_at": new_form.updated_at,
         }
-    ), 200
+    ), 201
 
 
 @form.route("/api/v1/forms/<int:form_id>", methods=["GET"])
