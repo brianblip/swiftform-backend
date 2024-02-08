@@ -90,3 +90,11 @@ class Question(db.Model):
     max = db.Column(db.Integer)
     steps = db.Column(db.Integer)
     order = db.Column(db.Integer, nullable=False, default=0)
+
+
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    recipient_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    title = db.Column(db.Text, nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now)

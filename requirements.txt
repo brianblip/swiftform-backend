@@ -7,6 +7,7 @@ psycopg2-binary==2.9.9
 setuptools==69.0.3
 Werkzeug==3.0.1
 flask-jwt-extended==4.6.0
+openai==1.10.0
 flask-cors==4.0.0
 ruff==0.1.15
 pre-commit==3.6.0

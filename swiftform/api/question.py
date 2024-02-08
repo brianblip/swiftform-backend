@@ -3,17 +3,21 @@ from flask_jwt_extended import jwt_required, current_user
 from datetime import datetime
 from swiftform.models import Question, Form, Section
 from swiftform.app import db
+from swiftform.decorators import require_fields
 
 question = Blueprint("question", __name__)
 
 
 @question.route("/api/v1/questions", methods=["POST"])
 @jwt_required()
+@require_fields(["type", "prompt"])
 def create_question():
     data = request.json
+    type = data.get("type")
+    prompt = data.get("prompt")
 
-    if len(data.get("prompt", "")) < 2:
-        abort(400, description="Question prompt must be at least 2 characters long")
+    if len(prompt) < 2:
+        abort(422, description="Question prompt must be at least 2 characters long")
 
     form_id = data.get("form_id")
 
@@ -27,7 +31,7 @@ def create_question():
         abort(404, description="Form not found")
 
     if form.user_id != current_user.id:
-        abort(403, description="You are not authorized to add questions to this form")
+        abort(401, description="You are not authorized to add questions to this form")
 
     section_id = data.get("section_id")
 
@@ -42,8 +46,8 @@ def create_question():
     try:
         new_question = Question(
             form_id=form_id,
-            type=data["type"],
-            prompt=data["prompt"],
+            type=type,
+            prompt=prompt,
             section_id=section_id,
             is_required=data.get("is_required", False),
         )
@@ -82,7 +86,7 @@ def get_question(question_id):
 
     form = Form.query.get(question.form_id)
     if form.user_id != current_user.id:
-        abort(403, description="You are not authorized to view this question")
+        abort(401, description="You are not authorized to view this question")
 
     return jsonify(
         {
@@ -102,10 +106,12 @@ def get_question(question_id):
 
 @question.route("/api/v1/questions/<int:question_id>", methods=["PUT"])
 @jwt_required()
+@require_fields(["type", "prompt"])
 def update_question(question_id):
     data = request.json
+    prompt = data.get("prompt")
 
-    if len(data.get("prompt", "")) < 2:
+    if len(prompt) < 2:
         abort(400, description="Question prompt must be at least 2 characters long")
 
     try:
@@ -161,7 +167,7 @@ def delete_question(question_id):
 
     form = Form.query.get(question.form_id)
     if form.user_id != current_user.id:
-        abort(403, description="You are not authorized to delete this question")
+        abort(401, description="You are not authorized to delete this question")
 
     db.session.delete(question)
     db.session.commit()
