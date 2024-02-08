@@ -84,7 +84,7 @@ class Question(db.Model):
     form_id = db.Column(db.Integer, db.ForeignKey("form.id"), nullable=False)
     type = db.Column(db.Enum(QuestionType), nullable=False)
     prompt = db.Column(db.Text, nullable=False)
-    section_id = db.Column(db.Integer, db.ForeignKey("section.id"))
+    section_id = db.Column(db.Integer, db.ForeignKey("section.id"), nullable=False)
     is_required = db.Column(db.Boolean, nullable=False, default=False)
     min = db.Column(db.Integer)
     max = db.Column(db.Integer)

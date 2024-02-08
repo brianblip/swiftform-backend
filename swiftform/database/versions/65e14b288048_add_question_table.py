@@ -40,7 +40,7 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column("prompt", sa.Text(), nullable=False),
-        sa.Column("section_id", sa.Integer()),
+        sa.Column("section_id", sa.Integer(), nullable=False),
         sa.Column("is_required", sa.Boolean(), nullable=False),
         sa.Column("min", sa.Integer()),
         sa.Column("max", sa.Integer()),
