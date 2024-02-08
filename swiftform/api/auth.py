@@ -1,10 +1,13 @@
 from flask import Blueprint, request, jsonify, abort
-from swiftform.models import User, TokenBlocklist
+from swiftform.models import User
 from swiftform.app import db
 
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt
-from datetime import datetime, timezone
+from flask_jwt_extended import (
+    create_access_token,
+    unset_jwt_cookies,
+    set_access_cookies,
+)
 
 auth = Blueprint("auth", __name__)
 
@@ -44,13 +47,19 @@ def register_user():
     except Exception as e:
         raise e
 
-    return jsonify(
+    response = jsonify(
         {
             "data": {
-                "access_token": access_token,
+                "id": new_user.id,
+                "name": new_user.name,
+                "email": new_user.email,
+                "avatar_url": new_user.avatar_url,
             }
         }
     )
+
+    set_access_cookies(response, access_token)
+    return response
 
 
 @auth.route("/api/v1/auth/login", methods=["POST"])
@@ -71,20 +80,25 @@ def login_user():
     except Exception as e:
         raise e
 
-    return jsonify({"data": {"access_token": access_token}})
+    response = jsonify(
+        {
+            "data": {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "avatar_url": user.avatar_url,
+            }
+        }
+    )
+    set_access_cookies(response, access_token)
+
+    return response
 
 
 @auth.route("/api/v1/auth/logout", methods=["POST"])
-@jwt_required()
 def logout_user():
-    jti = get_jwt()["jti"]
-    now = datetime.now(timezone.utc)
+    response = jsonify({"message": "Successfully logged out"})
 
-    try:
-        db.session.add(TokenBlocklist(jti=jti, created_at=now))
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        raise e
+    unset_jwt_cookies(response)
 
-    return jsonify({"message": "Successfully logged out"})
+    return response
