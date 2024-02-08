@@ -14,6 +14,7 @@ from swiftform.error_handlers import (
     handle_bad_request,
     handle_unauthorized,
     handle_not_found,
+    handle_unprocessable_content,
 )
 from flask_cors import CORS
 from datetime import timedelta, datetime, timezone
@@ -81,5 +82,6 @@ def create_app():
     app.register_error_handler(400, handle_bad_request)
     app.register_error_handler(401, handle_unauthorized)
     app.register_error_handler(404, handle_not_found)
+    app.register_error_handler(422, handle_unprocessable_content)
 
     return app

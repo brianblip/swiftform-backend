@@ -17,7 +17,7 @@ def create_form():
     description = data.get("description", "")
 
     if len(name) < 2:
-        abort(400, description="Form name must be at least 2 characters long")
+        abort(422, description="Form name must be at least 2 characters long")
 
     try:
         new_form = Form(name=name, description=description, user_id=current_user.id)
@@ -51,7 +51,7 @@ def get_form(form_id):
         raise e
 
     if form.user_id != current_user.id:
-        abort(403, description="You are not authorized to view this form")
+        abort(401, description="You are not authorized to view this form")
 
     return jsonify(
         {
@@ -81,11 +81,11 @@ def update_form(form_id):
         raise e
 
     if form.user_id != current_user.id:
-        abort(403, description="You are not authorized to update this form")
+        abort(401, description="You are not authorized to update this form")
 
     try:
         if len(name) < 2:
-            abort(400, description="Form name must be at least 2 characters long")
+            abort(422, description="Form name must be at least 2 characters long")
 
         form.name = data.get("name")
 
@@ -120,7 +120,7 @@ def delete_form(form_id):
         abort(404, description="Form not found")
 
     if form.user_id != current_user.id:
-        abort(403, description="You are not authorized to delete this form")
+        abort(401, description="You are not authorized to delete this form")
 
     try:
         db.session.delete(form)
