@@ -16,17 +16,18 @@ def create_response():
         form = Form.query.get(form_id)
         if form is None:
             abort(404, description="Form not found")
+    except Exception as e:
+        raise e
 
-        if form.user_id != current_user.id:
-            abort(
-                403,
-                description="You are not authorized to submit a response for this form",
-            )
-
+    if form.user_id != current_user.id:
+        abort(
+            401,
+            description="You are not authorized to submit a response for this form",
+        )
+    try:
         response = Response(form_id=form_id, user_id=current_user.id)
         db.session.add(response)
         db.session.commit()
-
     except Exception as e:
         db.session.rollback()
         raise e
@@ -45,10 +46,12 @@ def create_response():
 @jwt_required()
 def get_responses():
     form_id = request.args.get("form_id")
-
-    form = Form.query.get(form_id)
-    if form is None:
-        abort(404, description="Form not found")
+    try:
+        form = Form.query.get(form_id)
+        if form is None:
+            abort(404, description="Form not found")
+    except Exception as e:
+        raise e
 
     if form.user_id != current_user.id:
         abort(403, description="You are not authorized to view responses for this form")
@@ -74,16 +77,21 @@ def get_responses():
 )
 @jwt_required()
 def delete_response(response_id):
-    response = Response.query.get(response_id)
-    if response is None:
-        abort(404, description="Response not found")
+    try:
+        response = Response.query.get(response_id)
+        if response is None:
+            abort(404, description="Response not found")
+    except Exception as e:
+        raise e
 
-    user_id = current_user.id
+    if response.user_id != current_user.id:
+        abort(401, description="You are not authorized to delete this response")
 
-    if response.user_id != user_id:
-        abort(403, description="You are not authorized to delete this response")
-
-    db.session.delete(response)
-    db.session.commit()
+    try:
+        db.session.delete(response)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        raise e
 
     return jsonify({"message": "Response deleted successfully"}), 200
