@@ -9,9 +9,13 @@ def handle_unauthorized(e):
     return jsonify({"message": e.description}), 401
 
 
+def handle_not_found(e):
+    return jsonify({"message": e.description}), 404
+
+
 def handle_exception(e):
     return jsonify({"message": str(e)}), 500
 
 
-def handle_not_found(e):
-    return jsonify({"message": e.description}), 404
+def handle_unprocessable_content(e):
+    return jsonify({"message": e.description}), 422
