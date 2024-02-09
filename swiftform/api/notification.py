@@ -22,15 +22,7 @@ def create_notification():
         db.session.rollback()
         raise e
 
-    # Convert the new_notification object to a dictionary so it can be returned as JSON
-    notification_dict = {
-        "id": new_notification.id,
-        "recipient_id": new_notification.recipient_id,
-        "title": new_notification.title,
-        "message": new_notification.message,
-    }
-
-    return jsonify(notification_dict), 201
+    return jsonify({"data": new_notification.serialize()}), 201
 
 
 @notification.route("/api/v1/notifications", methods=["GET"])
@@ -41,15 +33,6 @@ def get_notifications():
     except Exception as e:
         raise e
 
-    notification_list = []
-    for notification in notifications:
-        notification_list.append(
-            {
-                "id": notification.id,
-                "recipient_id": notification.recipient_id,
-                "title": notification.title,
-                "message": notification.message,
-            }
-        )
+    notification_list = [notification.serialize() for notification in notifications]
 
-    return jsonify(notification_list), 200
+    return jsonify({"data": notification_list}), 200
