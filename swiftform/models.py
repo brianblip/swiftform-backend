@@ -84,6 +84,15 @@ class Section(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "form_id": self.form_id,
+            "title": self.title,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
 
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
