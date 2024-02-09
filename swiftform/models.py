@@ -64,3 +64,12 @@ class Notification(db.Model):
     title = db.Column(db.Text, nullable=False)
     message = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "recipient_id": self.recipient_id,
+            "title": self.title,
+            "message": self.message,
+            "created_at": self.created_at,
+        }
