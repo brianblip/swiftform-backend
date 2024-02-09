@@ -34,13 +34,7 @@ def create_section():
     except Exception as e:
         db.session.rollback()
         raise e
-    return jsonify(
-        {
-            "id": new_section.id,
-            "title": new_section.title,
-            "form_id": new_section.form_id,
-        }
-    ), 201
+    return jsonify({"data": new_section.serialize()}), 201
 
 
 @section.route("/api/v1/sections/<int:section_id>", methods=["GET"])
