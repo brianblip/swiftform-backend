@@ -70,6 +70,10 @@ def create_app():
 
     app.register_blueprint(form)
 
+    from swiftform.api.response import response
+
+    app.register_blueprint(response)
+
     from swiftform.api.prompt import prompt
 
     app.register_blueprint(prompt)
