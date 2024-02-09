@@ -28,16 +28,7 @@ def create_form():
         db.session.rollback()
         raise e
 
-    return jsonify(
-        {
-            "id": new_form.id,
-            "name": new_form.name,
-            "description": new_form.description,
-            "user_id": new_form.user_id,
-            "created_at": new_form.created_at,
-            "updated_at": new_form.updated_at,
-        }
-    ), 201
+    return jsonify({"data": new_form.serialize()}), 201
 
 
 @form.route("/api/v1/forms/<int:form_id>", methods=["GET"])
@@ -53,16 +44,7 @@ def get_form(form_id):
     if form.user_id != current_user.id:
         abort(401, description="You are not authorized to view this form")
 
-    return jsonify(
-        {
-            "id": form.id,
-            "name": form.name,
-            "description": form.description,
-            "user_id": form.user_id,
-            "created_at": form.created_at,
-            "updated_at": form.updated_at,
-        }
-    ), 200
+    return jsonify({"data": form.serialize()}), 200
 
 
 @form.route("/api/v1/forms/<int:form_id>", methods=["PUT"])
@@ -98,14 +80,7 @@ def update_form(form_id):
         db.session.rollback()
         raise e
 
-    return jsonify(
-        {
-            "id": form.id,
-            "name": form.name,
-            "description": form.description,
-            "user_id": form.user_id,
-        }
-    ), 200
+    return jsonify({"data": form.serialize()}), 200
 
 
 @form.route("/api/v1/forms/<int:form_id>", methods=["DELETE"])
