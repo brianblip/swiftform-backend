@@ -10,38 +10,35 @@ question = Blueprint("question", __name__)
 
 @question.route("/api/v1/questions", methods=["POST"])
 @jwt_required()
-@require_fields(["type", "prompt"])
+@require_fields(["type", "prompt", "section_id"])
 def create_question():
     data = request.json
     type = data.get("type")
     prompt = data.get("prompt")
+    section_id = data.get("section_id")
 
     if len(prompt) < 2:
         abort(422, description="Question prompt must be at least 2 characters long")
 
-    form_id = data.get("form_id")
+    try:
+        section = Section.query.get(section_id)
+
+        if section is None:
+            abort(404, description="Section not found")
+    except Exception as e:
+        raise e
+
+    form_id = section.form_id
 
     try:
         form = Form.query.get(form_id)
     except Exception as e:
-        db.session.rollback()
         raise e
-
-    if form is None:
-        abort(404, description="Form not found")
 
     if form.user_id != current_user.id:
-        abort(401, description="You are not authorized to add questions to this form")
-
-    section_id = data.get("section_id")
-
-    try:
-        section = Section.query.get(section_id)
-    except Exception as e:
-        db.session.rollback()
-        raise e
-    if section is not None and section.form_id != form_id:
-        abort(400, description="Section does not belong to the form")
+        abort(
+            401, description="You are not authorized to add questions to this section"
+        )
 
     try:
         new_question = Question(
@@ -61,15 +58,11 @@ def create_question():
     return jsonify(
         {
             "id": new_question.id,
-            "form_id": new_question.form_id,
             "type": new_question.type.value,
             "prompt": new_question.prompt,
             "section_id": new_question.section_id,
             "is_required": new_question.is_required,
-            "min": new_question.min,
-            "max": new_question.max,
             "order": new_question.order,
-            "steps": new_question.steps,
         }
     ), 201
 
