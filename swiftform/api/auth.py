@@ -13,10 +13,8 @@ from flask_jwt_extended import (
 auth = Blueprint("auth", __name__)
 
 
-
-
-@auth.route('/api/v1/auth/register', methods=['POST'])
-@require_fields(['name', 'email', 'password'])
+@auth.route("/api/v1/auth/register", methods=["POST"])
+@require_fields(["name", "email", "password"])
 def register_user():
     name = request.json.get("name")
     email = request.json.get("email")
@@ -51,16 +49,7 @@ def register_user():
     except Exception as e:
         raise e
 
-    response = jsonify(
-        {
-            "data": {
-                "id": new_user.id,
-                "name": new_user.name,
-                "email": new_user.email,
-                "avatar_url": new_user.avatar_url,
-            }
-        }
-    )
+    response = jsonify({"data": user.serialize()})
 
     set_access_cookies(response, access_token)
     return response
@@ -85,16 +74,7 @@ def login_user():
     except Exception as e:
         raise e
 
-    response = jsonify(
-        {
-            "data": {
-                "id": user.id,
-                "name": user.name,
-                "email": user.email,
-                "avatar_url": user.avatar_url,
-            }
-        }
-    )
+    response = jsonify({"data": user.serialize()})
     set_access_cookies(response, access_token)
 
     return response

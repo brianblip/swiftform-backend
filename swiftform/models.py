@@ -9,6 +9,14 @@ class User(db.Model):
     password = db.Column(db.Text, nullable=False)
     avatar_url = db.Column(db.Text, nullable=False)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "avatar_url": self.avatar_url,
+        }
+
 
 # Register a callback function that takes whatever object is passed in as the
 # identity when creating JWTs and converts it to a JSON serializable format.
@@ -58,6 +66,16 @@ class Form(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "user_id": self.user_id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
 
 class Response(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -72,3 +90,12 @@ class Notification(db.Model):
     title = db.Column(db.Text, nullable=False)
     message = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "recipient_id": self.recipient_id,
+            "title": self.title,
+            "message": self.message,
+            "created_at": self.created_at,
+        }
