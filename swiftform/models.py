@@ -102,7 +102,6 @@ class Question(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "form_id": self.form_id,
             "type": self.type.value,
             "prompt": self.prompt,
             "section_id": self.section_id,

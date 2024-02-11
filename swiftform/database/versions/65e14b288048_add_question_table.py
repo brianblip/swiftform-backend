@@ -23,7 +23,6 @@ def upgrade() -> None:
     op.create_table(
         "question",
         sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("form_id", sa.Integer(), nullable=False),
         sa.Column(
             "type",
             sa.Enum(
@@ -42,9 +41,6 @@ def upgrade() -> None:
         sa.Column("prompt", sa.Text(), nullable=False),
         sa.Column("section_id", sa.Integer(), nullable=False),
         sa.Column("is_required", sa.Boolean(), nullable=False),
-        sa.Column("min", sa.Integer()),
-        sa.Column("max", sa.Integer()),
-        sa.Column("steps", sa.Integer()),
         sa.Column("order", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
             ["form_id"],

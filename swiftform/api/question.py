@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, abort
-from flask_jwt_extended import jwt_required, current_user
+from flask_jwt_extended import jwt_required
 from datetime import datetime
-from swiftform.models import Question, Form, Section
+from swiftform.models import Question, Section
 from swiftform.app import db
 from swiftform.decorators import require_fields
 
@@ -28,21 +28,8 @@ def create_question():
     except Exception as e:
         raise e
 
-    form_id = section.form_id
-
-    try:
-        form = Form.query.get(form_id)
-    except Exception as e:
-        raise e
-
-    if form.user_id != current_user.id:
-        abort(
-            401, description="You are not authorized to add questions to this section"
-        )
-
     try:
         new_question = Question(
-            form_id=form_id,
             type=type,
             prompt=prompt,
             section_id=section_id,
@@ -68,10 +55,6 @@ def get_question(question_id):
     except Exception as e:
         raise e
 
-    form = Form.query.get(question.form_id)
-    if form.user_id != current_user.id:
-        abort(401, description="You are not authorized to view this question")
-
     return jsonify({"data": question.serialize()}), 200
 
 
@@ -92,13 +75,6 @@ def update_question(question_id):
     except Exception as e:
         raise e
 
-    try:
-        form = Form.query.get(question.form_id)
-        if form.user_id != current_user.id:
-            abort(403, description="You are not authorized to update this question")
-    except Exception as e:
-        raise e
-
     section_id = data.get("section_id")
 
     try:
@@ -106,8 +82,8 @@ def update_question(question_id):
     except Exception as e:
         db.session.rollback()
         raise e
-    if section is not None and section.form_id != question.form_id:
-        abort(400, description="Section does not belong to the form")
+    if section is None:
+        abort(404, description="Section not found")
 
     question.type = data["type"]
     question.prompt = data["prompt"]
@@ -126,10 +102,6 @@ def delete_question(question_id):
     question = Question.query.get(question_id)
     if question is None:
         abort(404, description="Question not found")
-
-    form = Form.query.get(question.form_id)
-    if form.user_id != current_user.id:
-        abort(401, description="You are not authorized to delete this question")
 
     db.session.delete(question)
     db.session.commit()
