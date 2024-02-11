@@ -66,6 +66,16 @@ class Form(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "user_id": self.user_id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
 
 class Section(db.Model):
     id = db.Column(db.Integer, primary_key=True)
