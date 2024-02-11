@@ -83,6 +83,14 @@ class Response(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "form_id": self.form_id,
+            "created_at": self.created_at,
+            "user_id": self.user_id,
+        }
+
 
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
