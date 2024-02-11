@@ -71,8 +71,11 @@ def create_app():
     app.register_blueprint(form)
 
     from swiftform.api.response import response
+    from swiftform.api.section import section
 
     app.register_blueprint(response)
+
+    app.register_blueprint(section)
 
     from swiftform.api.prompt import prompt
 

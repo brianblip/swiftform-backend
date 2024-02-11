@@ -2,46 +2,39 @@ from flask import Blueprint, jsonify, request, abort
 from flask_jwt_extended import jwt_required, current_user
 from swiftform.app import db
 from swiftform.models import Section, Form
+from swiftform.decorators import require_fields
 
 section = Blueprint("section", __name__)
 
 
 @section.route("/api/v1/sections", methods=["POST"])
 @jwt_required()
+@require_fields(["title"])
 def create_section():
     data = request.json
-
-    # Chech if user is the owner of the form
-    form_id = request.json.get("form_id")
+    title = data.get("title")
+    form_id = request.args.get("form_id")
 
     try:
         form = Form.query.get(form_id)
+        if form is None:
+            abort(404, description="Form not found")
     except Exception as e:
         db.session.rollback()
         raise e
-
-    if form is None:
-        abort(404, description="Form not found")
 
     if form.user_id != current_user.id:
         abort(401, description="You are not the owner of this form")
 
     try:
-        new_section = Section(title=data["title"], form_id=form_id)
+        new_section = Section(title=title, form_id=form_id)
 
         db.session.add(new_section)
         db.session.commit()
     except Exception as e:
         db.session.rollback()
         raise e
-
-    return jsonify(
-        {
-            "id": new_section.id,
-            "title": new_section.title,
-            "form_id": new_section.form_id,
-        }
-    ), 201
+    return jsonify({"data": new_section.serialize()}), 201
 
 
 @section.route("/api/v1/sections/<int:section_id>", methods=["GET"])
@@ -49,12 +42,10 @@ def create_section():
 def get_section(section_id):
     try:
         section = Section.query.get(section_id)
+        if section is None:
+            abort(404, description="Section not found")
     except Exception as e:
-        db.session.rollback()
         raise e
-
-    if section is None:
-        abort(404, description="Section not found")
 
     try:
         form = Form.query.get(section.form_id)
@@ -64,13 +55,7 @@ def get_section(section_id):
         db.session.rollback()
         raise e
 
-    return jsonify(
-        {
-            "id": section.id,
-            "title": section.title,
-            "form_id": section.form_id,
-        }
-    )
+    return jsonify({"data": section.serialize()}), 200
 
 
 @section.route("/api/v1/sections/<int:section_id>", methods=["PUT"])
@@ -80,36 +65,15 @@ def update_section(section_id):
 
     try:
         section = Section.query.get(section_id)
+        if section is None:
+            abort(404, description="Section not found")
     except Exception as e:
-        db.session.rollback()
         raise e
 
-    if section is None:
-        abort(404, description="Section not found")
+    section.title = data.get("title")
+    db.session.commit()
 
-    try:
-        form = Form.query.get(section.form_id)
-    except Exception as e:
-        db.session.rollback()
-        raise e
-
-    if form.user_id != current_user.id:
-        abort(401, description="You are not the owner of this form")
-
-    try:
-        section.title = data["title"]
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        raise e
-
-    return jsonify(
-        {
-            "id": section.id,
-            "title": section.title,
-            "form_id": section.form_id,
-        }
-    ), 200
+    return jsonify({"data": section.serialize()}), 200
 
 
 @section.route("/api/v1/sections/<int:section_id>", methods=["DELETE"])
@@ -117,21 +81,10 @@ def update_section(section_id):
 def delete_section(section_id):
     try:
         section = Section.query.get(section_id)
+        if section is None:
+            abort(404, description="Section not found")
     except Exception as e:
-        db.session.rollback()
         raise e
-
-    if section is None:
-        abort(404, description="Section not found")
-
-    try:
-        form = Form.query.get(section.form_id)
-    except Exception as e:
-        db.session.rollback()
-        raise e
-
-    if form.user_id != current_user.id:
-        abort(401, description="You are not the owner of this form")
 
     try:
         db.session.delete(section)
