@@ -34,10 +34,7 @@ def create_response():
 
     return jsonify(
         {
-            "id": response.id,
-            "form_id": response.form_id,
-            "user_id": response.user_id,
-            "created_at": response.created_at,
+            "data": response.serialize(),
         }
     ), 201
 
@@ -58,16 +55,7 @@ def get_responses():
 
     responses = Response.query.filter_by(form_id=form_id).all()
 
-    response_list = []
-    for response in responses:
-        response_list.append(
-            {
-                "id": response.id,
-                "form_id": response.form_id,
-                "user_id": response.user_id,
-                "created_at": response.created_at,
-            }
-        )
+    response_list = [response.serialize() for response in responses]
 
     return jsonify(response_list), 200
 
