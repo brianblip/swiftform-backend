@@ -55,16 +55,7 @@ def create_question():
         db.session.rollback()
         raise e
 
-    return jsonify(
-        {
-            "id": new_question.id,
-            "type": new_question.type.value,
-            "prompt": new_question.prompt,
-            "section_id": new_question.section_id,
-            "is_required": new_question.is_required,
-            "order": new_question.order,
-        }
-    ), 201
+    return jsonify({"data": new_question.serialize()}), 201
 
 
 @question.route("/api/v1/questions/<int:question_id>", methods=["GET"])
@@ -81,20 +72,7 @@ def get_question(question_id):
     if form.user_id != current_user.id:
         abort(401, description="You are not authorized to view this question")
 
-    return jsonify(
-        {
-            "id": question.id,
-            "form_id": question.form_id,
-            "type": question.type.value,
-            "prompt": question.prompt,
-            "section_id": question.section_id,
-            "is_required": question.is_required,
-            "min": question.min,
-            "max": question.max,
-            "order": question.order,
-            "steps": question.steps,
-        }
-    ), 200
+    return jsonify({"data": question.serialize()}), 200
 
 
 @question.route("/api/v1/questions/<int:question_id>", methods=["PUT"])
@@ -139,16 +117,7 @@ def update_question(question_id):
 
     db.session.commit()
 
-    return jsonify(
-        {
-            "id": question.id,
-            "form_id": question.form_id,
-            "type": question.type.value,
-            "prompt": question.prompt,
-            "section_id": question.section_id,
-            "is_required": question.is_required,
-        }
-    ), 200
+    return jsonify({"data": question.serialize()}), 200
 
 
 @question.route("/api/v1/questions/<int:question_id>", methods=["DELETE"])

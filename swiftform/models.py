@@ -3,7 +3,6 @@ from datetime import datetime
 from enum import Enum
 
 
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
@@ -99,6 +98,17 @@ class Question(db.Model):
     max = db.Column(db.Integer)
     steps = db.Column(db.Integer)
     order = db.Column(db.Integer, nullable=False, default=0)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "form_id": self.form_id,
+            "type": self.type.value,
+            "prompt": self.prompt,
+            "section_id": self.section_id,
+            "is_required": self.is_required,
+            "order": self.order,
+        }
 
 
 class Notification(db.Model):
