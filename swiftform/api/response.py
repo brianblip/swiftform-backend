@@ -34,10 +34,7 @@ def create_response():
 
     return jsonify(
         {
-            "id": response.id,
-            "form_id": response.form_id,
-            "user_id": response.user_id,
-            "created_at": response.created_at,
+            "data": response.serialize(),
         }
     ), 201
 
@@ -62,16 +59,7 @@ def get_responses():
         db.session.rollback()
         raise e
 
-    response_list = []
-    for response in responses:
-        response_list.append(
-            {
-                "id": response.id,
-                "form_id": response.form_id,
-                "user_id": response.user_id,
-                "created_at": response.created_at,
-            }
-        )
+    response_list = [response.serialize() for response in responses]
 
     return jsonify(response_list), 200
 
