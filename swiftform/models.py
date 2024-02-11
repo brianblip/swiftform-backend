@@ -3,12 +3,21 @@ from datetime import datetime
 from enum import Enum
 
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
     avatar_url = db.Column(db.Text, nullable=False)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "avatar_url": self.avatar_url,
+        }
 
 
 # Register a callback function that takes whatever object is passed in as the
@@ -98,3 +107,12 @@ class Notification(db.Model):
     title = db.Column(db.Text, nullable=False)
     message = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "recipient_id": self.recipient_id,
+            "title": self.title,
+            "message": self.message,
+            "created_at": self.created_at,
+        }
