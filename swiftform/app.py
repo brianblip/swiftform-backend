@@ -70,24 +70,25 @@ def create_app():
 
     app.register_blueprint(form)
 
-    from swiftform.api.response import response
     from swiftform.api.section import section
 
-    app.register_blueprint(response)
-
     app.register_blueprint(section)
+
+    from swiftform.api.question import question
+
+    app.register_blueprint(question)
+
+    from swiftform.api.response import response
+
+    app.register_blueprint(response)
 
     from swiftform.api.prompt import prompt
 
     app.register_blueprint(prompt)
 
-    from swiftform.api.section import section
+    from swiftform.api.answer import answer
 
-    app.register_blueprint(section)
-
-    from swiftform.api.response import response
-
-    app.register_blueprint(response)
+    app.register_blueprint(answer)
 
     from swiftform.api.notification import notification
 

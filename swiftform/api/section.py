@@ -13,7 +13,7 @@ section = Blueprint("section", __name__)
 def create_section():
     data = request.json
     title = data.get("title")
-    form_id = request.args.get("form_id")
+    form_id = data.get("form_id")
 
     try:
         form = Form.query.get(form_id)
