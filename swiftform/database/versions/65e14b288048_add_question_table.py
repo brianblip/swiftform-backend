@@ -43,10 +43,6 @@ def upgrade() -> None:
         sa.Column("is_required", sa.Boolean(), nullable=False),
         sa.Column("order", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["form_id"],
-            ["form.id"],
-        ),
-        sa.ForeignKeyConstraint(
             ["section_id"],
             ["section.id"],
         ),

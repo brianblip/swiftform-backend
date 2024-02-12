@@ -83,20 +83,15 @@ class QuestionType(Enum):
     CHECKBOX = "checkbox"
     DROPDOWN = "dropdown"
     ATTACHMENT = "attachment"
-    SLIDER = "slider"
     DATE = "date"
 
 
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    form_id = db.Column(db.Integer, db.ForeignKey("form.id"), nullable=False)
     type = db.Column(db.Enum(QuestionType), nullable=False)
     prompt = db.Column(db.Text, nullable=False)
     section_id = db.Column(db.Integer, db.ForeignKey("section.id"), nullable=False)
     is_required = db.Column(db.Boolean, nullable=False, default=False)
-    min = db.Column(db.Integer)
-    max = db.Column(db.Integer)
-    steps = db.Column(db.Integer)
     order = db.Column(db.Integer, nullable=False, default=0)
 
     def serialize(self):
@@ -106,6 +101,21 @@ class Question(db.Model):
             "prompt": self.prompt,
             "section_id": self.section_id,
             "is_required": self.is_required,
+            "order": self.order,
+        }
+
+
+class Choice(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    question_id = db.Column(db.Integer, db.ForeignKey("question.id"), nullable=False)
+    text = db.Column(db.Text, nullable=False)
+    order = db.Column(db.Integer, nullable=False, default=0)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "question_id": self.question_id,
+            "text": self.text,
             "order": self.order,
         }
 
