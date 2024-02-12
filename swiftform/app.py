@@ -94,6 +94,10 @@ def create_app():
 
     app.register_blueprint(notification)
 
+    from swiftform.api.choice import choice
+
+    app.register_blueprint(choice)
+
     app.register_error_handler(Exception, handle_exception)
     app.register_error_handler(400, handle_bad_request)
     app.register_error_handler(401, handle_unauthorized)
