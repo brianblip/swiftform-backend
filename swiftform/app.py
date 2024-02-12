@@ -77,10 +77,17 @@ def create_app():
     from swiftform.api.question import question
 
     app.register_blueprint(question)
+    from swiftform.api.response import response
+
+    app.register_blueprint(response)
 
     from swiftform.api.prompt import prompt
 
     app.register_blueprint(prompt)
+
+    from swiftform.api.answer import answer
+
+    app.register_blueprint(answer)
 
     from swiftform.api.notification import notification
 

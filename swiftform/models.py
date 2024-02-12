@@ -83,20 +83,16 @@ class QuestionType(Enum):
     CHECKBOX = "checkbox"
     DROPDOWN = "dropdown"
     ATTACHMENT = "attachment"
-    SLIDER = "slider"
     DATE = "date"
 
 
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    form_id = db.Column(db.Integer, db.ForeignKey("form.id"), nullable=False)
+
     type = db.Column(db.Enum(QuestionType), nullable=False)
     prompt = db.Column(db.Text, nullable=False)
     section_id = db.Column(db.Integer, db.ForeignKey("section.id"), nullable=False)
     is_required = db.Column(db.Boolean, nullable=False, default=False)
-    min = db.Column(db.Integer)
-    max = db.Column(db.Integer)
-    steps = db.Column(db.Integer)
     order = db.Column(db.Integer, nullable=False, default=0)
 
     def serialize(self):
@@ -107,6 +103,40 @@ class Question(db.Model):
             "section_id": self.section_id,
             "is_required": self.is_required,
             "order": self.order,
+            "created_at": self.created_at,
+            "user_id": self.user_id,
+        }
+
+
+class Response(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    form_id = db.Column(db.Integer, db.ForeignKey("form.id"), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "user_id": self.user_id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
+
+class Answer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    response_id = db.Column(db.Integer, db.ForeignKey("response.id"), nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey("question.id"), nullable=False)
+    text = db.Column(db.Text)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "response_id": self.response_id,
+            "question_id": self.question_id,
+            "text": self.text,
         }
 
 
