@@ -144,6 +144,20 @@ class Answer(db.Model):
             "text": self.text,
         }
 
+class Choice(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    question_id = db.Column(db.Integer, db.ForeignKey("question.id"), nullable=False)
+    text = db.Column(db.Text, nullable=False)
+    order = db.Column(db.Integer, nullable=False, default=0)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "question_id": self.question_id,
+            "text": self.text,
+            "order": self.order,
+        }
+
 
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
