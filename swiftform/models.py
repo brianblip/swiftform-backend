@@ -67,6 +67,16 @@ class Form(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "user_id": self.user_id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
 
 class Section(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -88,7 +98,6 @@ class QuestionType(Enum):
 
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-
     type = db.Column(db.Enum(QuestionType), nullable=False)
     prompt = db.Column(db.Text, nullable=False)
     section_id = db.Column(db.Integer, db.ForeignKey("section.id"), nullable=False)
@@ -103,8 +112,6 @@ class Question(db.Model):
             "section_id": self.section_id,
             "is_required": self.is_required,
             "order": self.order,
-            "created_at": self.created_at,
-            "user_id": self.user_id,
         }
 
 
@@ -117,11 +124,8 @@ class Response(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name,
-            "description": self.description,
             "user_id": self.user_id,
             "created_at": self.created_at,
-            "updated_at": self.updated_at,
         }
 
 
