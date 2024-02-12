@@ -78,7 +78,10 @@ def delete_answer(answer_id):
     except Exception as e:
         raise e
 
-    db.session.delete(answer)
-    db.session.commit()
+    try:
+        db.session.delete(answer)
+        db.session.commit()
+    except Exception as e:
+        raise e
 
     return jsonify({"data": answer.serialize()}), 200
