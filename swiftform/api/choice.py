@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, abort
-from flask_jwt_extended import jwt_required, current_user
+from flask_jwt_extended import jwt_required
 from swiftform.app import db
 from swiftform.models import Choice, Question
 from swiftform.decorators import require_fields
@@ -9,11 +9,12 @@ choice = Blueprint("choice", __name__)
 
 @choice.route("/api/v1/choices", methods=["POST"])
 @jwt_required()
-@require_fields(["text"])
+@require_fields(["text", "order"])
 def create_choice():
     data = request.json
     text = data.get("text")
     question_id = data.get("question_id")
+    order = data.get("order")
 
     try:
         question = Question.query.get(question_id)
@@ -24,7 +25,7 @@ def create_choice():
         raise e
 
     try:
-        new_choice = Choice(text=text, question_id=question_id)
+        new_choice = Choice(text=text, question_id=question_id, order=order)
 
         db.session.add(new_choice)
         db.session.commit()
@@ -44,13 +45,6 @@ def get_choice(choice_id):
     except Exception as e:
         raise e
 
-    try:
-        question = Question.query.get(choice.question_id)
-        if question.user_id != current_user.id:
-            abort(401, description="You are not the owner of this question")
-    except Exception as e:
-        raise e
-
     return jsonify({"data": choice.serialize()}), 200
 
 
@@ -65,13 +59,6 @@ def update_choice(choice_id):
         choice = Choice.query.get(choice_id)
         if choice is None:
             abort(404, description="Choice not found")
-    except Exception as e:
-        raise e
-
-    try:
-        question = Question.query.get(choice.question_id)
-        if question.user_id != current_user.id:
-            abort(401, description="You are not the owner of this question")
     except Exception as e:
         raise e
 
@@ -95,16 +82,9 @@ def delete_choice(choice_id):
         raise e
 
     try:
-        question = Question.query.get(choice.question_id)
-        if question.user_id != current_user.id:
-            abort(401, description="You are not the owner of this question")
-    except Exception as e:
-        raise e
-
-    try:
         db.session.delete(choice)
         db.session.commit()
     except Exception as e:
         db.session.rollback()
         raise e
-    return jsonify({"data": choice.serialize()}), 200
+    return jsonify({"message": "Choice deleted"}), 200

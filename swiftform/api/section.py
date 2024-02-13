@@ -61,13 +61,7 @@ def get_section(section_id):
         db.session.rollback()
         raise e
 
-    return jsonify(
-        {
-            "id": section.id,
-            "title": section.title,
-            "form_id": section.form_id,
-        }
-    ), 200
+    return jsonify({"data": section.serialize()}), 200
 
 
 @section.route("/api/v1/sections/<int:section_id>", methods=["PUT"])
@@ -93,13 +87,7 @@ def update_section(section_id):
     section.title = data.get("title")
     db.session.commit()
 
-    return jsonify(
-        {
-            "id": section.id,
-            "title": section.title,
-            "form_id": section.form_id,
-        }
-    ), 200
+    return jsonify({"data": section.serialize()}), 200
 
 
 @section.route("/api/v1/sections/<int:section_id>", methods=["DELETE"])
