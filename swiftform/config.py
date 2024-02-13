@@ -4,18 +4,20 @@ from datetime import timedelta
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+DEBUG_SERVER_NAME = os.getenv("SERVER_NAME", "localhost:5000")
+PRODUCTION_SERVER_NAME = (
+    "{0}:{1}".format(
+        os.getenv("FLASK_HOST", "localhost"), os.getenv("FLASK_PORT", "8000")
+    ),
+)
+
 
 class Config(object):
     SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "The Meaning of Life")
 
     DEBUG = bool(strtobool(os.getenv("FLASK_DEBUG", "false")))
 
-    SERVER_NAME = os.getenv(
-        "SERVER_NAME",
-        "{0}:{1}".format(
-            os.getenv("FLASK_HOST", "localhost"), os.getenv("FLASK_PORT", "8000")
-        ),
-    )
+    SERVER_NAME = DEBUG_SERVER_NAME if DEBUG else PRODUCTION_SERVER_NAME
 
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 
