@@ -1,6 +1,7 @@
 from swiftform.app import db, jwt
 from datetime import datetime
 from enum import Enum
+from sqlalchemy.orm import relationship
 
 
 class User(db.Model):
@@ -67,14 +68,16 @@ class Form(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
+    sections = relationship("Section", backref="form", lazy=True)
+
     def serialize(self):
         return {
             "id": self.id,
             "name": self.name,
-            "description": self.description,
-            "user_id": self.user_id,
+            "sections": [section.serialize() for section in self.sections],
             "created_at": self.created_at,
             "updated_at": self.updated_at,
+            "user_id": self.user_id,
         }
 
 
@@ -85,11 +88,13 @@ class Section(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
+    questions = relationship("Question", backref="section", lazy=True)
+
     def serialize(self):
         return {
             "id": self.id,
-            "form_id": self.form_id,
             "title": self.title,
+            "questions": [question.serialize() for question in self.questions],
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }
@@ -113,6 +118,8 @@ class Question(db.Model):
     is_required = db.Column(db.Boolean, nullable=False, default=False)
     order = db.Column(db.Integer, nullable=False, default=0)
 
+    choices = relationship("Choice", backref="question", lazy=True)
+
     def serialize(self):
         return {
             "id": self.id,
@@ -121,6 +128,7 @@ class Question(db.Model):
             "section_id": self.section_id,
             "is_required": self.is_required,
             "order": self.order,
+            "choices": [choice.serialize() for choice in self.choices],
         }
 
 
