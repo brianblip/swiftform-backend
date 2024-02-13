@@ -9,7 +9,7 @@ choice = Blueprint("choice", __name__)
 
 @choice.route("/api/v1/choices", methods=["POST"])
 @jwt_required()
-@require_fields(["text", "order"])
+@require_fields(["text", "question_id", "order"])
 def create_choice():
     data = request.json
     text = data.get("text")
