@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, abort
-from flask_jwt_extended import jwt_required, current_user
+from flask_jwt_extended import jwt_required
 from swiftform.app import db
 from swiftform.models import Choice, Question
 from swiftform.decorators import require_fields
@@ -45,13 +45,6 @@ def get_choice(choice_id):
     except Exception as e:
         raise e
 
-    try:
-        question = Question.query.get(choice.question_id)
-        if question.user_id != current_user.id:
-            abort(401, description="You are not the owner of this question")
-    except Exception as e:
-        raise e
-
     return jsonify({"data": choice.serialize()}), 200
 
 
@@ -66,13 +59,6 @@ def update_choice(choice_id):
         choice = Choice.query.get(choice_id)
         if choice is None:
             abort(404, description="Choice not found")
-    except Exception as e:
-        raise e
-
-    try:
-        question = Question.query.get(choice.question_id)
-        if question.user_id != current_user.id:
-            abort(401, description="You are not the owner of this question")
     except Exception as e:
         raise e
 
@@ -96,16 +82,9 @@ def delete_choice(choice_id):
         raise e
 
     try:
-        question = Question.query.get(choice.question_id)
-        if question.user_id != current_user.id:
-            abort(401, description="You are not the owner of this question")
-    except Exception as e:
-        raise e
-
-    try:
         db.session.delete(choice)
         db.session.commit()
     except Exception as e:
         db.session.rollback()
         raise e
-    return jsonify({"data": choice.serialize()}), 200
+    return jsonify({"message": "Choice deleted"}), 200
