@@ -68,7 +68,9 @@ class Form(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
-    sections = relationship("Section", backref="form", lazy=True)
+    sections = relationship(
+        "Section", backref="form", lazy=True, cascade="all, delete-orphan"
+    )
 
     def serialize(self):
         return {
@@ -88,7 +90,9 @@ class Section(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
-    questions = relationship("Question", backref="section", lazy=True)
+    questions = relationship(
+        "Question", backref="section", lazy=True, cascade="all, delete-orphan"
+    )
 
     def serialize(self):
         return {
@@ -118,7 +122,9 @@ class Question(db.Model):
     is_required = db.Column(db.Boolean, nullable=False, default=False)
     order = db.Column(db.Integer, nullable=False, default=0)
 
-    choices = relationship("Choice", backref="question", lazy=True)
+    choices = relationship(
+        "Choice", backref="question", lazy=True, cascade="all, delete-orphan"
+    )
 
     def serialize(self):
         return {
