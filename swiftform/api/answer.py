@@ -84,4 +84,4 @@ def delete_answer(answer_id):
     except Exception as e:
         raise e
 
-    return jsonify({"data": answer.serialize()}), 200
+    return jsonify({"message": "Answer deleted successfully"}), 200

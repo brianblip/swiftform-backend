@@ -121,11 +121,12 @@ class Response(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
+    answer = db.relationship("Answer", backref="response", lazy=True)
+
     def serialize(self):
         return {
             "id": self.id,
-            "user_id": self.user_id,
-            "created_at": self.created_at,
+            "answers": [a.serialize() for a in self.answer],
         }
 
 

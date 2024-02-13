@@ -57,12 +57,10 @@ def get_responses():
 
     response_list = [response.serialize() for response in responses]
 
-    return jsonify(response_list), 200
+    return jsonify({"data": response_list}), 200
 
 
-@response.route(
-    "/api/v1/forms/<int:form_id>/responses/<int:response_id>", methods=["DELETE"]
-)
+@response.route("/api/v1/responses/<int:response_id>", methods=["DELETE"])
 @jwt_required()
 def delete_response(response_id):
     try:
