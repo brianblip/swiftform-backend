@@ -79,6 +79,9 @@ class Form(db.Model):
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "sections": [section.serialize() for section in self.sections],
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+            "user_id": self.user_id,
         }
 
 
