@@ -68,7 +68,9 @@ class Form(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
-    sections = relationship("Section", backref="form", lazy=True)
+    sections = relationship(
+        "Section", backref="form", lazy=True, cascade="all, delete-orphan"
+    )
 
     def serialize(self):
         return {
@@ -79,6 +81,9 @@ class Form(db.Model):
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "sections": [section.serialize() for section in self.sections],
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+            "user_id": self.user_id,
         }
 
 
@@ -89,11 +94,16 @@ class Section(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
+    questions = relationship(
+        "Question", backref="section", lazy=True, cascade="all, delete-orphan"
+    )
+
     def serialize(self):
         return {
             "id": self.id,
             "form_id": self.form_id,
             "title": self.title,
+            "questions": [question.serialize() for question in self.questions],
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }
@@ -117,7 +127,9 @@ class Question(db.Model):
     is_required = db.Column(db.Boolean, nullable=False, default=False)
     order = db.Column(db.Integer, nullable=False, default=0)
 
-    choices = relationship("Choice", backref="question", lazy=True)
+    choices = relationship(
+        "Choice", backref="question", lazy=True, cascade="all, delete-orphan"
+    )
 
     def serialize(self):
         return {
@@ -137,7 +149,9 @@ class Response(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
-    answer = db.relationship("Answer", backref="response", lazy=True)
+    answer = db.relationship(
+        "Answer", backref="response", lazy=True, cascade="all, delete-orphan"
+    )
 
     def serialize(self):
         return {
@@ -159,6 +173,7 @@ class Answer(db.Model):
             "question_id": self.question_id,
             "text": self.text,
         }
+
 
 class Choice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
