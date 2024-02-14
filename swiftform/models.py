@@ -79,9 +79,6 @@ class Form(db.Model):
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "sections": [section.serialize() for section in self.sections],
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
-            "user_id": self.user_id,
         }
 
 
@@ -92,13 +89,11 @@ class Section(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
-    questions = relationship("Question", backref="section", lazy=True)
-
     def serialize(self):
         return {
             "id": self.id,
+            "form_id": self.form_id,
             "title": self.title,
-            "questions": [question.serialize() for question in self.questions],
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }
