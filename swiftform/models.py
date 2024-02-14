@@ -1,5 +1,6 @@
 from swiftform.app import db, jwt
 from datetime import datetime
+from enum import Enum
 
 
 class User(db.Model):
@@ -56,6 +57,92 @@ def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
     token = db.session.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
 
     return token is not None
+
+
+class Form(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "user_id": self.user_id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
+
+class Section(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    form_id = db.Column(db.Integer, db.ForeignKey("form.id"), nullable=False)
+    title = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+
+class QuestionType(Enum):
+    TEXTFIELD = "textfield"
+    TEXTAREA = "textarea"
+    MULTIPLE_CHOICE = "multiple_choice"
+    CHECKBOX = "checkbox"
+    DROPDOWN = "dropdown"
+    ATTACHMENT = "attachment"
+    DATE = "date"
+
+
+class Question(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.Enum(QuestionType), nullable=False)
+    prompt = db.Column(db.Text, nullable=False)
+    section_id = db.Column(db.Integer, db.ForeignKey("section.id"), nullable=False)
+    is_required = db.Column(db.Boolean, nullable=False, default=False)
+    order = db.Column(db.Integer, nullable=False, default=0)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "type": self.type.value,
+            "prompt": self.prompt,
+            "section_id": self.section_id,
+            "is_required": self.is_required,
+            "order": self.order,
+        }
+
+
+class Response(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    form_id = db.Column(db.Integer, db.ForeignKey("form.id"), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    answer = db.relationship("Answer", backref="response", lazy=True)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "answers": [a.serialize() for a in self.answer],
+        }
+
+
+class Answer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    response_id = db.Column(db.Integer, db.ForeignKey("response.id"), nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey("question.id"), nullable=False)
+    text = db.Column(db.Text)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "response_id": self.response_id,
+            "question_id": self.question_id,
+            "text": self.text,
+        }
 
 
 class Notification(db.Model):

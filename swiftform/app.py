@@ -14,6 +14,7 @@ from swiftform.error_handlers import (
     handle_bad_request,
     handle_unauthorized,
     handle_not_found,
+    handle_unprocessable_content,
 )
 from flask_cors import CORS
 from datetime import timedelta, datetime, timezone
@@ -38,7 +39,6 @@ def create_app():
 
     app = Flask(__name__)
     app.config.from_object("swiftform.config.Config")
-
     db.init_app(app)
     jwt.init_app(app)
     CORS(app, supports_credentials=True)
@@ -66,17 +66,37 @@ def create_app():
 
     app.register_blueprint(users)
 
+    from swiftform.api.form import form
+
+    app.register_blueprint(form)
+
+    from swiftform.api.section import section
+
+    app.register_blueprint(section)
+
+    from swiftform.api.question import question
+
+    app.register_blueprint(question)
+    from swiftform.api.response import response
+
+    app.register_blueprint(response)
+
     from swiftform.api.prompt import prompt
 
     app.register_blueprint(prompt)
 
+    from swiftform.api.answer import answer
+
+    app.register_blueprint(answer)
+
     from swiftform.api.notification import notification
-    
+
     app.register_blueprint(notification)
 
     app.register_error_handler(Exception, handle_exception)
     app.register_error_handler(400, handle_bad_request)
     app.register_error_handler(401, handle_unauthorized)
     app.register_error_handler(404, handle_not_found)
+    app.register_error_handler(422, handle_unprocessable_content)
 
     return app

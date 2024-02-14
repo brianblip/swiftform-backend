@@ -15,3 +15,7 @@ def handle_not_found(e):
 
 def handle_exception(e):
     return jsonify({"message": str(e)}), 500
+
+
+def handle_unprocessable_content(e):
+    return jsonify({"message": e.description}), 422
