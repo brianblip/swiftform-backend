@@ -149,7 +149,9 @@ class Response(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
-    answer = db.relationship("Answer", backref="response", lazy=True)
+    answer = db.relationship(
+        "Answer", backref="response", lazy=True, cascade="all, delete-orphan"
+    )
 
     def serialize(self):
         return {
