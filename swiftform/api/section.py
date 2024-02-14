@@ -9,7 +9,7 @@ section = Blueprint("section", __name__)
 
 @section.route("/api/v1/sections", methods=["POST"])
 @jwt_required()
-@require_fields(["title"])
+@require_fields(["title", "form_id"])
 def create_section():
     data = request.json
     title = data.get("title")
