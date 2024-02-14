@@ -1,6 +1,7 @@
 from swiftform.app import db, jwt
 from datetime import datetime
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
@@ -8,12 +9,21 @@ class User(db.Model):
     password = db.Column(db.Text, nullable=False)
     avatar_url = db.Column(db.Text, nullable=False)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "avatar_url": self.avatar_url,
+        }
+
 
 # Register a callback function that takes whatever object is passed in as the
 # identity when creating JWTs and converts it to a JSON serializable format.
 @jwt.user_identity_loader
 def user_identity_lookup(user):
     return user.id
+
 
 # Register a callback function that loads a user from your database whenever
 # a protected route is accessed. This should return any python object on a
@@ -23,6 +33,7 @@ def user_identity_lookup(user):
 def user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
     return User.query.filter_by(id=identity).one_or_none()
+
 
 # This could be expanded to fit the needs of your application. For example,
 # it could track who revoked a JWT, when a token expires, notes for why a
@@ -36,6 +47,7 @@ class TokenBlocklist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     jti = db.Column(db.String(36), nullable=False, index=True)
     created_at = db.Column(db.DateTime, nullable=False)
+
 
 # Callback function to check if a JWT exists in the database blocklist
 @jwt.token_in_blocklist_loader
@@ -52,3 +64,12 @@ class Notification(db.Model):
     title = db.Column(db.Text, nullable=False)
     message = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "recipient_id": self.recipient_id,
+            "title": self.title,
+            "message": self.message,
+            "created_at": self.created_at,
+        }
