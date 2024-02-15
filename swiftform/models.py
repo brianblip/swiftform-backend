@@ -85,6 +85,20 @@ class Section(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
+    question = db.relationship(
+        "Question", backref="section", lazy=True, cascade="all, delete-orphan"
+    )
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "form_id": self.form_id,
+            "title": self.title,
+            "questions": [question.serialize() for question in self.questions],
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
 
 class QuestionType(Enum):
     TEXTFIELD = "textfield"
