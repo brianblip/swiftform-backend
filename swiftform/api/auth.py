@@ -49,7 +49,7 @@ def register_user():
     except Exception as e:
         raise e
 
-    response = jsonify({"data": user.serialize()})
+    response = jsonify({"data": new_user.serialize()})
 
     set_access_cookies(response, access_token)
     return response
