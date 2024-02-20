@@ -25,7 +25,8 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("response_id", sa.Integer(), nullable=False),
         sa.Column("question_id", sa.Integer(), nullable=False),
-        sa.Column("text", sa.Text(), nullable=True),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column("text", sa.Text(), nullable=False),
         sa.ForeignKeyConstraint(
             ["question_id"],
             ["question.id"],

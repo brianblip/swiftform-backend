@@ -41,6 +41,8 @@ def upgrade() -> None:
         sa.Column("prompt", sa.Text(), nullable=False),
         sa.Column("section_id", sa.Integer(), nullable=False),
         sa.Column("is_required", sa.Boolean(), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column("updated_at", sa.DateTime(), nullable=False),
         sa.Column("order", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
             ["section_id"],
