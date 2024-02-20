@@ -81,9 +81,6 @@ class Form(db.Model):
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "sections": [section.serialize() for section in self.sections],
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
-            "user_id": self.user_id,
         }
 
 
@@ -126,6 +123,8 @@ class Question(db.Model):
     section_id = db.Column(db.Integer, db.ForeignKey("section.id"), nullable=False)
     is_required = db.Column(db.Boolean, nullable=False, default=False)
     order = db.Column(db.Integer, nullable=False, default=0)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
     choices = relationship(
         "Choice", backref="question", lazy=True, cascade="all, delete-orphan"
@@ -140,6 +139,8 @@ class Question(db.Model):
             "is_required": self.is_required,
             "order": self.order,
             "choices": [choice.serialize() for choice in self.choices],
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
         }
 
 
@@ -157,6 +158,9 @@ class Response(db.Model):
         return {
             "id": self.id,
             "answers": [a.serialize() for a in self.answer],
+            "form_id": self.form_id,
+            "created_at": self.created_at,
+            "user_id": self.user_id,
         }
 
 
@@ -164,7 +168,8 @@ class Answer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     response_id = db.Column(db.Integer, db.ForeignKey("response.id"), nullable=False)
     question_id = db.Column(db.Integer, db.ForeignKey("question.id"), nullable=False)
-    text = db.Column(db.Text)
+    text = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
     def serialize(self):
         return {
@@ -172,6 +177,7 @@ class Answer(db.Model):
             "response_id": self.response_id,
             "question_id": self.question_id,
             "text": self.text,
+            "created_at": self.created_at,
         }
 
 
@@ -180,6 +186,8 @@ class Choice(db.Model):
     question_id = db.Column(db.Integer, db.ForeignKey("question.id"), nullable=False)
     text = db.Column(db.Text, nullable=False)
     order = db.Column(db.Integer, nullable=False, default=0)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
     def serialize(self):
         return {
@@ -187,6 +195,8 @@ class Choice(db.Model):
             "question_id": self.question_id,
             "text": self.text,
             "order": self.order,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
         }
 
 
@@ -195,7 +205,7 @@ class Notification(db.Model):
     recipient_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     title = db.Column(db.Text, nullable=False)
     message = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.now)
+    created_at = db.Column(db.DateTime, default=datetime.now, nullable=False)
 
     def serialize(self):
         return {
