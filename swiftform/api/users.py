@@ -6,15 +6,14 @@ users = Blueprint("users", __name__)
 
 
 @users.route("/api/v1/users/me", methods=["GET"])
-@jwt_required()
+@jwt_required(optional=True)
 def get_currently_logged_in_user():
-    return jsonify(
-        {
-            "data": {
-                "id": current_user.id,
-                "name": current_user.name,
-                "email": current_user.email,
-                "avatar_url": current_user.avatar_url,
-            }
-        }
-    )
+    if not current_user:
+        return jsonify({"data": None})
+    data = {
+        "id": current_user.id,
+        "name": current_user.name,
+        "email": current_user.email,
+        "avatar_url": current_user.avatar_url,
+    }
+    return jsonify({"data": data})
