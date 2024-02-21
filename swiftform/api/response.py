@@ -2,12 +2,14 @@ from flask import Blueprint, jsonify, request, abort
 from flask_jwt_extended import jwt_required, current_user
 from swiftform.models import Response, Form
 from swiftform.app import db
+from swiftform.decorators import require_fields
 
 response = Blueprint("response", __name__)
 
 
 @response.route("/api/v1/responses", methods=["POST"])
 @jwt_required()
+@require_fields(["form_id"])
 def create_response():
     data = request.json
     form_id = data.get("form_id")

@@ -2,18 +2,22 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, current_user
 from swiftform.models import Notification
 from swiftform.app import db
+from swiftform.decorators import require_fields
 
 notification = Blueprint("notification", __name__)
 
 
 @notification.route("/api/v1/notifications", methods=["POST"])
 @jwt_required()
+@require_fields(["title", "message", "recipient_id"])
 def create_notification():
     data = request.json
+    title = data["title"]
+    message = data["message"]
 
     try:
         new_notification = Notification(
-            title=data["title"], message=data["message"], recipient_id=current_user.id
+            title=title, message=message, recipient_id=current_user.id
         )
 
         db.session.add(new_notification)

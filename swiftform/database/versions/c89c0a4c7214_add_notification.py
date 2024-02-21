@@ -26,7 +26,7 @@ def upgrade() -> None:
         sa.Column("recipient_id", sa.Integer(), nullable=False),
         sa.Column("title", sa.Text(), nullable=False),
         sa.Column("message", sa.Text(), nullable=False),
-        sa.Column("created_at", sa.DateTime(), nullable=True),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.ForeignKeyConstraint(
             ["recipient_id"],
             ["user.id"],
