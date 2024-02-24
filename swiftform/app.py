@@ -97,6 +97,10 @@ def create_app():
 
     app.register_blueprint(choice)
 
+    from swiftform.api.avatar_upload import avatar_upload
+
+    app.register_blueprint(avatar_upload)
+
     app.register_error_handler(Exception, handle_exception)
     app.register_error_handler(400, handle_bad_request)
     app.register_error_handler(401, handle_unauthorized)
