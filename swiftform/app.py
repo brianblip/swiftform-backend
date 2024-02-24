@@ -39,6 +39,7 @@ def create_app():
 
     app = Flask(__name__)
     app.config.from_object("swiftform.config.Config")
+    app.config["MAX_CONTENT_LENGTH"] = 8 * 1024 * 1024  # 8MB
     db.init_app(app)
     jwt.init_app(app)
     CORS(app, supports_credentials=True)
