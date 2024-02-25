@@ -1,14 +1,13 @@
-from flask import Blueprint, request, jsonify, abort
+from swiftform.api import api
+from flask import request, jsonify, abort
 from swiftform.models import Form
 from swiftform.app import db
 from flask_jwt_extended import jwt_required, current_user
 from datetime import datetime
 from swiftform.decorators import require_fields
 
-form = Blueprint("form", __name__)
 
-
-@form.route("/api/v1/forms", methods=["GET"])
+@api.route("/api/v1/forms", methods=["GET"])
 @jwt_required()
 def get_forms():
     try:
@@ -19,7 +18,7 @@ def get_forms():
     return jsonify({"data": [form.serialize() for form in forms]}), 200
 
 
-@form.route("/api/v1/forms", methods=["POST"])
+@api.route("/api/v1/forms", methods=["POST"])
 @jwt_required()
 @require_fields(["name"])
 def create_form():
@@ -31,7 +30,8 @@ def create_form():
         abort(422, description="Form name must be at least 2 characters long")
 
     try:
-        new_form = Form(name=name, description=description, user_id=current_user.id)
+        new_form = Form(name=name, description=description,
+                        user_id=current_user.id)
 
         db.session.add(new_form)
         db.session.commit()
@@ -42,7 +42,7 @@ def create_form():
     return jsonify({"data": new_form.serialize()}), 201
 
 
-@form.route("/api/v1/forms/<int:form_id>", methods=["GET"])
+@api.route("/api/v1/forms/<int:form_id>", methods=["GET"])
 @jwt_required()
 def get_form(form_id):
     try:
@@ -58,7 +58,7 @@ def get_form(form_id):
     return jsonify({"data": form.serialize()}), 200
 
 
-@form.route("/api/v1/forms/<int:form_id>", methods=["PUT"])
+@api.route("/api/v1/forms/<int:form_id>", methods=["PUT"])
 @jwt_required()
 @require_fields(["name"])
 def update_form(form_id):
@@ -94,7 +94,7 @@ def update_form(form_id):
     return jsonify({"data": form.serialize()}), 200
 
 
-@form.route("/api/v1/forms/<int:form_id>", methods=["DELETE"])
+@api.route("/api/v1/forms/<int:form_id>", methods=["DELETE"])
 @jwt_required()
 def delete_form(form_id):
     try:

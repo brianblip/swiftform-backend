@@ -1,13 +1,12 @@
-from flask import Blueprint, jsonify, request, abort
+from swiftform.api import api
+from flask import jsonify, request, abort
 from flask_jwt_extended import jwt_required, current_user
 from swiftform.models import Response, Form
 from swiftform.app import db
 from swiftform.decorators import require_fields
 
-response = Blueprint("response", __name__)
 
-
-@response.route("/api/v1/responses", methods=["POST"])
+@api.route("/api/v1/responses", methods=["POST"])
 @jwt_required()
 @require_fields(["form_id"])
 def create_response():
@@ -41,7 +40,7 @@ def create_response():
     ), 201
 
 
-@response.route("/api/v1/responses", methods=["GET"])
+@api.route("/api/v1/responses", methods=["GET"])
 @jwt_required()
 def get_responses():
     form_id = request.args.get("form_id")
@@ -62,7 +61,7 @@ def get_responses():
     return jsonify({"data": response_list}), 200
 
 
-@response.route("/api/v1/responses/<int:response_id>", methods=["DELETE"])
+@api.route("/api/v1/responses/<int:response_id>", methods=["DELETE"])
 @jwt_required()
 def delete_response(response_id):
     try:

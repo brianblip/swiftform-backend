@@ -1,5 +1,6 @@
 import os
-from flask import Blueprint, jsonify, request
+from swiftform.api import api
+from flask import jsonify, request
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import RequestEntityTooLarge
 
@@ -8,10 +9,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "public")
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "txt"}
 
-avatar_upload = Blueprint("avatar_upload", __name__)
 
-
-@avatar_upload.route("/upload", methods=["POST"])
+@api.route("/upload", methods=["POST"])
 def upload_file():
     if "file" not in request.files:
         return jsonify({"error": "No file part in the request"}), 400
@@ -38,7 +37,7 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@avatar_upload.route("/upload", methods=["PATCH"])
+@api.route("/upload", methods=["PATCH"])
 def update_file():
     # check if the post request has the file part
     if "file" not in request.files:
@@ -62,7 +61,7 @@ def update_file():
         return jsonify({"error": "File type not allowed"}), 400
 
 
-@avatar_upload.route("/upload", methods=["DELETE"])
+@api.route("/upload", methods=["DELETE"])
 def delete_file():
     filename = request.json.get("filename")
     if filename is None:
@@ -76,6 +75,6 @@ def delete_file():
         return jsonify({"error": "File not found"}), 404
 
 
-@avatar_upload.errorhandler(RequestEntityTooLarge)
+@api.errorhandler(RequestEntityTooLarge)
 def handle_request_entity_too_large():
     return jsonify({"error": "File is too large it must be less than 8MB"}), 413

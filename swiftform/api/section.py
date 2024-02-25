@@ -1,13 +1,12 @@
-from flask import Blueprint, jsonify, request, abort
+from swiftform.api import api
+from flask import jsonify, request, abort
 from flask_jwt_extended import jwt_required, current_user
 from swiftform.app import db
 from swiftform.models import Section, Form
 from swiftform.decorators import require_fields
 
-section = Blueprint("section", __name__)
 
-
-@section.route("/api/v1/sections", methods=["POST"])
+@api.route("/api/v1/sections", methods=["POST"])
 @jwt_required()
 @require_fields(["title", "form_id"])
 def create_section():
@@ -37,7 +36,7 @@ def create_section():
     return jsonify({"data": new_section.serialize()}), 201
 
 
-@section.route("/api/v1/sections/<int:section_id>", methods=["GET"])
+@api.route("/api/v1/sections/<int:section_id>", methods=["GET"])
 @jwt_required()
 def get_section(section_id):
     try:
@@ -58,7 +57,7 @@ def get_section(section_id):
     return jsonify({"data": section.serialize()}), 200
 
 
-@section.route("/api/v1/sections/<int:section_id>", methods=["PUT"])
+@api.route("/api/v1/sections/<int:section_id>", methods=["PUT"])
 @jwt_required()
 def update_section(section_id):
     data = request.json
@@ -84,7 +83,7 @@ def update_section(section_id):
     return jsonify({"data": section.serialize()}), 200
 
 
-@section.route("/api/v1/sections/<int:section_id>", methods=["DELETE"])
+@api.route("/api/v1/sections/<int:section_id>", methods=["DELETE"])
 @jwt_required()
 def delete_section(section_id):
     try:

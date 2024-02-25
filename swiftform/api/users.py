@@ -1,11 +1,9 @@
-from flask import Blueprint, jsonify
+from swiftform.api import api
+from flask import jsonify
 from flask_jwt_extended import jwt_required, current_user
 
 
-users = Blueprint("users", __name__)
-
-
-@users.route("/api/v1/users/me", methods=["GET"])
+@api.route("/api/v1/users/me", methods=["GET"])
 @jwt_required(optional=True)
 def get_currently_logged_in_user():
     if not current_user:
