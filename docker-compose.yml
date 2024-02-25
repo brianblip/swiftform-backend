@@ -36,6 +36,10 @@ services:
     container_name: swiftform_postgres
     image: postgres:16.1
     restart: unless-stopped
+    expose:
+        - 5432
+    ports:
+        - 5432:5432
     # volumes:
     #   - ./storage/db-data:/var/lib/postgresql/data
     environment:
