@@ -6,7 +6,7 @@ from swiftform.app import db
 from swiftform.decorators import require_fields
 
 
-@api.route("/api/v1/notifications", methods=["POST"])
+@api.route("notifications", methods=["POST"])
 @jwt_required()
 @require_fields(["title", "message", "recipient_id"])
 def create_notification():
@@ -28,7 +28,7 @@ def create_notification():
     return jsonify({"data": new_notification.serialize()}), 201
 
 
-@api.route("/api/v1/notifications", methods=["GET"])
+@api.route("notifications", methods=["GET"])
 @jwt_required()
 def get_notifications():
     try:

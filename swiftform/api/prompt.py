@@ -6,7 +6,7 @@ import json
 from flask_jwt_extended import jwt_required
 
 
-@api.route("/api/v1/prompt", methods=["POST"])
+@api.route("prompt", methods=["POST"])
 @jwt_required()
 def generate_prompt():
     try:

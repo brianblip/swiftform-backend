@@ -6,7 +6,7 @@ from swiftform.decorators import require_fields
 from swiftform.app import db
 
 
-@api.route("/api/v1/answers", methods=["POST"])
+@api.route("answers", methods=["POST"])
 @jwt_required()
 @require_fields(["response_id", "question_id", "text"])
 def create_answer():
@@ -35,7 +35,7 @@ def create_answer():
     return jsonify({"data": answer.serialize()}), 201
 
 
-@api.route("/api/v1/answers/<int:answer_id>", methods=["GET"])
+@api.route("answers/<int:answer_id>", methods=["GET"])
 @jwt_required()
 def get_answer(answer_id):
     try:
@@ -48,7 +48,7 @@ def get_answer(answer_id):
     return jsonify({"data": answer.serialize()}), 200
 
 
-@api.route("/api/v1/answers/<int:answer_id>", methods=["PUT"])
+@api.route("answers/<int:answer_id>", methods=["PUT"])
 @jwt_required()
 @require_fields(["text"])
 def update_answer(answer_id):
@@ -68,7 +68,7 @@ def update_answer(answer_id):
     return jsonify({"data": answer.serialize()}), 200
 
 
-@api.route("/api/v1/answers/<int:answer_id>", methods=["DELETE"])
+@api.route("answers/<int:answer_id>", methods=["DELETE"])
 @jwt_required()
 def delete_answer(answer_id):
     try:

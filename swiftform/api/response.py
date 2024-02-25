@@ -6,7 +6,7 @@ from swiftform.app import db
 from swiftform.decorators import require_fields
 
 
-@api.route("/api/v1/responses", methods=["POST"])
+@api.route("responses", methods=["POST"])
 @jwt_required()
 @require_fields(["form_id"])
 def create_response():
@@ -40,7 +40,7 @@ def create_response():
     ), 201
 
 
-@api.route("/api/v1/responses", methods=["GET"])
+@api.route("responses", methods=["GET"])
 @jwt_required()
 def get_responses():
     form_id = request.args.get("form_id")
@@ -61,7 +61,7 @@ def get_responses():
     return jsonify({"data": response_list}), 200
 
 
-@api.route("/api/v1/responses/<int:response_id>", methods=["DELETE"])
+@api.route("responses/<int:response_id>", methods=["DELETE"])
 @jwt_required()
 def delete_response(response_id):
     try:

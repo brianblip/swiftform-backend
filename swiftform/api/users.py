@@ -3,7 +3,7 @@ from flask import jsonify
 from flask_jwt_extended import jwt_required, current_user
 
 
-@api.route("/api/v1/users/me", methods=["GET"])
+@api.route("users/me", methods=["GET"])
 @jwt_required(optional=True)
 def get_currently_logged_in_user():
     if not current_user:

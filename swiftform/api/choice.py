@@ -6,7 +6,7 @@ from swiftform.models import Choice, Question
 from swiftform.decorators import require_fields
 
 
-@api.route("/api/v1/choices", methods=["POST"])
+@api.route("choices", methods=["POST"])
 @jwt_required()
 @require_fields(["text", "order", "question_id"])
 def create_choice():
@@ -34,7 +34,7 @@ def create_choice():
     return jsonify({"data": new_choice.serialize()}), 201
 
 
-@api.route("/api/v1/choices/<int:choice_id>", methods=["GET"])
+@api.route("choices/<int:choice_id>", methods=["GET"])
 @jwt_required()
 def get_choice(choice_id):
     try:
@@ -47,7 +47,7 @@ def get_choice(choice_id):
     return jsonify({"data": choice.serialize()}), 200
 
 
-@api.route("/api/v1/choices/<int:choice_id>", methods=["PUT"])
+@api.route("choices/<int:choice_id>", methods=["PUT"])
 @jwt_required()
 @require_fields(["text"])
 def update_choice(choice_id):
@@ -70,7 +70,7 @@ def update_choice(choice_id):
     return jsonify({"data": choice.serialize()}), 200
 
 
-@api.route("/api/v1/choices/<int:choice_id>", methods=["DELETE"])
+@api.route("choices/<int:choice_id>", methods=["DELETE"])
 @jwt_required()
 def delete_choice(choice_id):
     try:

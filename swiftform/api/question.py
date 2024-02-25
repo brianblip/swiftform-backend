@@ -7,7 +7,7 @@ from swiftform.app import db
 from swiftform.decorators import require_fields
 
 
-@api.route("/api/v1/questions", methods=["POST"])
+@api.route("questions", methods=["POST"])
 @jwt_required()
 @require_fields(["type", "prompt", "section_id", "order"])
 def create_question():
@@ -46,7 +46,7 @@ def create_question():
     return jsonify({"data": new_question.serialize()}), 201
 
 
-@api.route("/api/v1/questions/<int:question_id>", methods=["GET"])
+@api.route("questions/<int:question_id>", methods=["GET"])
 @jwt_required()
 def get_question(question_id):
     try:
@@ -59,7 +59,7 @@ def get_question(question_id):
     return jsonify({"data": question.serialize()}), 200
 
 
-@api.route("/api/v1/questions/<int:question_id>", methods=["PUT"])
+@api.route("questions/<int:question_id>", methods=["PUT"])
 @jwt_required()
 @require_fields(["type", "prompt"])
 def update_question(question_id):
@@ -97,7 +97,7 @@ def update_question(question_id):
     return jsonify({"data": question.serialize()}), 200
 
 
-@api.route("/api/v1/questions/<int:question_id>", methods=["DELETE"])
+@api.route("questions/<int:question_id>", methods=["DELETE"])
 @jwt_required()
 def delete_question(question_id):
     try:
