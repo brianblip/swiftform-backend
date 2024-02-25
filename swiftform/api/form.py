@@ -15,6 +15,7 @@ def get_forms():
         forms = Form.query.filter_by(user_id=current_user.id).all()
     except Exception as e:
         raise e
+
     return jsonify({"data": [form.serialize() for form in forms]}), 200
 
 
