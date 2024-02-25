@@ -1,13 +1,12 @@
+from swiftform.api import api
 from openai import OpenAI
-from flask import request, jsonify, Blueprint, abort
+from flask import request, jsonify, abort
 import json
 
 from flask_jwt_extended import jwt_required
 
-prompt = Blueprint("prompt", __name__)
 
-
-@prompt.route("/api/v1/prompt", methods=["POST"])
+@api.route("prompt", methods=["POST"])
 @jwt_required()
 def generate_prompt():
     try:

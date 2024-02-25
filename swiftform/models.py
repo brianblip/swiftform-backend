@@ -1,4 +1,4 @@
-from swiftform.app import db
+from swiftform.database import db
 from datetime import datetime
 from enum import Enum
 from sqlalchemy.orm import relationship

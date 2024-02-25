@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify, abort
+from swiftform.api import api
+from flask import request, jsonify, abort
 from swiftform.models import User
 from swiftform.app import db
 from email_validator import validate_email, EmailNotValidError
@@ -10,10 +11,8 @@ from flask_jwt_extended import (
     set_access_cookies,
 )
 
-auth = Blueprint("auth", __name__)
 
-
-@auth.route("/api/v1/auth/register", methods=["POST"])
+@api.route("auth/register", methods=["POST"])
 @require_fields(["name", "email", "password"])
 def register_user():
     name = request.json.get("name")
@@ -63,7 +62,7 @@ def register_user():
     return response
 
 
-@auth.route("/api/v1/auth/login", methods=["POST"])
+@api.route("auth/login", methods=["POST"])
 @require_fields(["email", "password"])
 def login_user():
     email = request.json.get("email")
@@ -93,7 +92,7 @@ def login_user():
     return response
 
 
-@auth.route("/api/v1/auth/logout", methods=["POST"])
+@api.route("auth/logout", methods=["POST"])
 def logout_user():
     response = jsonify({"message": "Successfully logged out"})
 
