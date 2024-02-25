@@ -35,6 +35,8 @@ class Config(object):
         ),
     )
 
+    MAX_CONTENT_LENGTH = os.getenv('MAX_CONTENT_LENGTH', 8_388_608)
+
     # If true this will only allow the cookies that contain your JWTs to be sent
     # over https. In production, this should always be set to True
     JWT_COOKIE_SECURE = False
