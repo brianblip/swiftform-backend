@@ -39,11 +39,9 @@ class Config(object):
 
     MAX_CONTENT_LENGTH = os.getenv('MAX_CONTENT_LENGTH', 8_388_608)
 
-    # If true this will only allow the cookies that contain your JWTs to be sent
-    # over https. In production, this should always be set to True
-    JWT_COOKIE_SECURE = False
+    JWT_COOKIE_SECURE = ENV == "production"
     JWT_TOKEN_LOCATION = ["cookies"]
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
 
     # todo: this should be True in production
-    JWT_COOKIE_CSRF_PROTECT = False
+    JWT_COOKIE_CSRF_PROTECT = ENV == "production"
