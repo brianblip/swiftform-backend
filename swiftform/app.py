@@ -11,6 +11,17 @@ alembic = Alembic()
 jwt = JWTManager()
 
 
+def load_models():
+    """
+    Lazy loading models helps prevent circular imports and enables
+    Alembic to discover the models effectively.
+    """
+    from swiftform import models  # noqa: F401
+
+
+load_models()
+
+
 def create_app():
     """
     Create a Flask application using the app factory pattern.
