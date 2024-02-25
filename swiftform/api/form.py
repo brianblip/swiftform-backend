@@ -8,6 +8,16 @@ from swiftform.decorators import require_fields
 form = Blueprint("form", __name__)
 
 
+@form.route("/api/v1/forms", methods=["GET"])
+@jwt_required()
+def get_forms():
+    try:
+        forms = Form.query.filter_by(user_id=current_user.id).all()
+    except Exception as e:
+        raise e
+    return jsonify({"data": [form.serialize() for form in forms]}), 200
+
+
 @form.route("/api/v1/forms", methods=["POST"])
 @jwt_required()
 @require_fields(["name"])
