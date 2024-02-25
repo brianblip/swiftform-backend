@@ -1,15 +1,14 @@
 from flask import Flask
 from swiftform.config import Config
 from swiftform.database import db
+from swiftform.jwt_manager import jwt
 from flask_alembic import Alembic
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager
 from swiftform.api import api
 from swiftform.error_handlers import ExceptionHandlers
 
 config = Config()
 alembic = Alembic()
-jwt = JWTManager()
 
 
 def create_app():
