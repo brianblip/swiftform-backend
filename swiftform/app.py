@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_alembic import Alembic
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from swiftform.api import api
 
 config = Config()
 db = SQLAlchemy()
@@ -37,6 +38,8 @@ def create_app():
     alembic.init_app(app)
     CORS(app, support_credentials=True)
     jwt.init_app(app)
+
+    app.register_blueprint(api)
 
     return app
 
