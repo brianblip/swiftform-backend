@@ -1,15 +1,14 @@
 from flask import Flask
 from swiftform.config import Config
 from swiftform.database import db
+from swiftform.jwt_manager import (jwt, refresh_expiring_token)
 from flask_alembic import Alembic
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager
 from swiftform.api import api
 from swiftform.error_handlers import ExceptionHandlers
 
 config = Config()
 alembic = Alembic()
-jwt = JWTManager()
 
 
 def create_app():
@@ -40,6 +39,8 @@ def create_app():
                                ExceptionHandlers.handle_not_found)
     app.register_error_handler(422,
                                ExceptionHandlers.handle_unprocessable_content)
+
+    app.after_request(refresh_expiring_token)
 
     return app
 
