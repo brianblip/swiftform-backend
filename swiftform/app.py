@@ -5,6 +5,7 @@ from flask_alembic import Alembic
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from swiftform.api import api
+from swiftform.error_handlers import ExceptionHandlers
 
 config = Config()
 alembic = Alembic()
@@ -28,6 +29,17 @@ def create_app():
     jwt.init_app(app)
 
     app.register_blueprint(api)
+
+    app.register_error_handler(Exception,
+                               ExceptionHandlers.handle_exception)
+    app.register_error_handler(400,
+                               ExceptionHandlers.handle_bad_request)
+    app.register_error_handler(401,
+                               ExceptionHandlers.handle_unauthorized)
+    app.register_error_handler(404,
+                               ExceptionHandlers.handle_not_found)
+    app.register_error_handler(422,
+                               ExceptionHandlers.handle_unprocessable_content)
 
     return app
 
