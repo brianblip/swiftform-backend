@@ -8,6 +8,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config(object):
     SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "The Meaning of Life")
 
+    ENV = os.getenv("FLASK_ENV", "development")
+
     DEBUG = bool(strtobool(os.getenv("FLASK_DEBUG", "false")))
 
     HOST = os.getenv("FLASK_HOST", "localhost")
