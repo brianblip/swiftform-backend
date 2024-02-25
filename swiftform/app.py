@@ -39,6 +39,7 @@ def create_app():
 
     app = Flask(__name__)
     app.config.from_object("swiftform.config.Config")
+    app.config["MAX_CONTENT_LENGTH"] = 8 * 1024 * 1024  # 8MB
     db.init_app(app)
     jwt.init_app(app)
     CORS(app, supports_credentials=True)
@@ -96,6 +97,10 @@ def create_app():
     from swiftform.api.choice import choice
 
     app.register_blueprint(choice)
+
+    from swiftform.api.avatar_upload import avatar_upload
+
+    app.register_blueprint(avatar_upload)
 
     app.register_error_handler(Exception, handle_exception)
     app.register_error_handler(400, handle_bad_request)

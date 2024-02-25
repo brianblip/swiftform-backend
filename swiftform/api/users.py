@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
-
 from flask_jwt_extended import jwt_required, current_user
+
 
 users = Blueprint("users", __name__)
 

@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify, abort
 from swiftform.models import User
 from swiftform.app import db
+from email_validator import validate_email, EmailNotValidError
 from swiftform.decorators import require_fields
-
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import (
     create_access_token,
@@ -22,10 +22,18 @@ def register_user():
     avatar_url = request.json.get("avatar_url")
 
     try:
+        validate_email(email)
+    except EmailNotValidError:
+        abort(400, description="Invalid email")
+
+    if len(password) < 8:
+        abort(422, description="Password must be at least 8 characters long")
+
+    try:
         user = User.query.filter_by(email=email).first()
 
         if user:
-            abort(400, description="User already exists")
+            abort(422, description="User already exists")
     except Exception as e:
         raise e
 
@@ -60,6 +68,11 @@ def register_user():
 def login_user():
     email = request.json.get("email")
     password = request.json.get("password")
+
+    try:
+        validate_email(email)
+    except EmailNotValidError:
+        abort(400, description="Invalid email")
 
     try:
         user = User.query.filter_by(email=email).first()
