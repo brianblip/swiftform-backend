@@ -21,6 +21,11 @@ RUN git clone https://github.com/vimalloc/flask-jwt-extended.git \
     && cd flask-jwt-extended \
     && python setup.py install --prefix /usr
 
+# Install flask-alembic
+RUN git clone https://github.com/davidism/flask-alembic.git \
+    && cd flask-alembic \
+    && pip install --upgrade -e . --target /usr/lib/python3.11/site-packages
+
 RUN adduser -D sf
 RUN mkdir -p /home/sf/app && chown -R sf:sf /home/sf/app
 RUN mkdir -p /var/log/flask-app && touch /var/log/flask-app/flask-app.err.log && touch /var/log/flask-app/flask-app.out.log
