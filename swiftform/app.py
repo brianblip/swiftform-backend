@@ -2,9 +2,11 @@ from flask import Flask
 from swiftform.config import Config
 from flask_alembic import Alembic
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 
 config = Config()
 alembic = Alembic()
+jwt = JWTManager()
 
 
 def create_app():
@@ -20,6 +22,7 @@ def create_app():
     # Initialize extensions
     alembic.init_app(app)
     CORS(app, support_credentials=True)
+    jwt.init_app(app)
 
     return app
 
