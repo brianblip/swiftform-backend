@@ -5,10 +5,11 @@ from swiftform.jwt_manager import jwt, refresh_expiring_token
 from flask_alembic import Alembic
 from flask_cors import CORS
 from swiftform.api import api
-from swiftform.error_handlers import ExceptionHandlers
+from swiftform.exception_handlers import ExceptionHandlers
 
 config = Config()
 alembic = Alembic()
+exception_handlers = ExceptionHandlers()
 
 
 def create_app():
@@ -26,14 +27,9 @@ def create_app():
     alembic.init_app(app)
     CORS(app, supports_credentials=True)
     jwt.init_app(app)
+    exception_handlers.init_app(app)
 
     app.register_blueprint(api)
-
-    app.register_error_handler(Exception, ExceptionHandlers.handle_exception)
-    app.register_error_handler(400, ExceptionHandlers.handle_bad_request)
-    app.register_error_handler(401, ExceptionHandlers.handle_unauthorized)
-    app.register_error_handler(404, ExceptionHandlers.handle_not_found)
-    app.register_error_handler(422, ExceptionHandlers.handle_unprocessable_content)
 
     app.after_request(refresh_expiring_token)
 
