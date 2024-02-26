@@ -1,4 +1,3 @@
-import datetime
 from flask_jwt_extended import (
     JWTManager,
     create_access_token,
@@ -8,6 +7,7 @@ from flask_jwt_extended import (
 )
 from swiftform.database import db
 from swiftform.models import TokenBlocklist, User
+from datetime import datetime, timezone, timedelta
 
 jwt = JWTManager()
 
@@ -19,9 +19,8 @@ def refresh_expiring_token(response):
     """
     try:
         exp_timestamp = get_jwt()["exp"]
-        now = datetime.now(datetime.timezone.utc)
-        target_timestamp = datetime.timestamp(
-            now + datetime.timedelta(minutes=30))
+        now = datetime.now(timezone.utc)
+        target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
         if target_timestamp > exp_timestamp:
             access_token = create_access_token(identity=current_user)
             set_access_cookies(response, access_token)
