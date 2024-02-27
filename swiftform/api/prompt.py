@@ -2,11 +2,8 @@ from swiftform.api import api
 from openai import OpenAI
 from flask import request, jsonify, abort
 import json
-import os
 
 from flask_jwt_extended import jwt_required
-
-openai_enabled = os.environ.get("OPENAI_ENABLED", "false").lower() == "true"
 
 
 @api.route("prompt", methods=["POST"])
@@ -17,9 +14,6 @@ def generate_prompt():
 
         if not text:
             abort(400, description="Missing required parameter: text")
-
-        if not openai_enabled:
-            return jsonify({"data": OPEN_AI_DUMMY_RESPONSE})
 
         prompt = create_prompt(text)
 
@@ -33,7 +27,7 @@ def generate_prompt():
         except json.JSONDecodeError:
             abort(500, description="Error parsing OpenAI response")
 
-        return jsonify({"data": serialized_openai_response.fields})
+        return jsonify({"data": serialized_openai_response})
 
     except Exception as e:
         raise e
@@ -45,10 +39,16 @@ client = OpenAI()
 # give instructions to llm on how to complete the task based on the text provided
 def create_prompt(text):
     prompt = f"""
-    You will be provided with text delimited by triple backticks.
-    This text will describe a form that you need to help create.
+    You are an AI assistant for a form creation tool. You will provide developers with a JSON representation of a form based on the text they provide.
 
-    Your task is to provide an array of objects in JSON format. Each item in the array should represent a field in the form. Each object should contain the following properties:
+    The text is delimited by triple backticks. In this text, the developer will tell what the form will be used for. The text may not be as detailed as you would like, so you will need to figure it out yourself.
+
+    The form will contain the following properties:
+    - label: The label of the form.
+    - description: The description of the form.
+    - fields: An array of fields in the form. Don't return an empty array.
+
+    Each field should contain the following properties:
     - label: The label of the field.
     - name: The name attribute of the field.
     - type: The type of the input field (e.g., text, email, password).
@@ -59,6 +59,9 @@ def create_prompt(text):
     - value: The value of the validation (e.g., true, 10, 100).
     - message: The error message to display if the validation fails.
 
+    Supported types are:
+    - text: A single-line text field.
+
     Supported validations are:
     - required: The field is required.
     - minLength: The minimum length of the field.
@@ -66,7 +69,7 @@ def create_prompt(text):
     - min: The minimum value of the field.
     - max: The maximum value of the field.
     - pattern: The pattern the field must match.
-
+    
     ```{text}```
     """
 
