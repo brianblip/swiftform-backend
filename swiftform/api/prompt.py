@@ -44,22 +44,26 @@ def create_prompt(text):
     The text is delimited by triple backticks. In this text, the developer will tell what the form will be used for. The text may not be as detailed as you would like, so you will need to figure it out yourself.
 
     The form will contain the following properties:
-    - label: The label of the form.
+    - name: The name of the form.
     - description: The description of the form.
-    - fields: An array of fields in the form. Don't return an empty array.
+    - sections: An array of sections in the form.
 
-    Each field should contain the following properties:
-    - label: The label of the field.
-    - name: The name attribute of the field.
-    - type: The type of the input field (e.g., text, email, password).
-    - validations: An array of validation rules for the field.
+    Each section should contain the following properties:
+    - title: The title of the section.
+    - questions: An array of questions in the section.
+
+    Each question should contain the following properties:
+    - type: The type of the question.
+    - prompt: The prompt for the question.
+    - order: The order of the question in the section.
+    - validations: An array of validation rules for the question.
 
     Validations are optional. If validations are provided, you must provide an array of validation objects. And it must contain the following properties:
     - type: The type of validation (e.g., required, minLength, maxLength).
     - value: The value of the validation (e.g., true, 10, 100).
     - message: The error message to display if the validation fails.
 
-    Supported types are:
+    Supported questions types are:
     - text: A single-line text field.
 
     Supported validations are:
