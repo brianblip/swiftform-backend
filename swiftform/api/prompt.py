@@ -2,8 +2,11 @@ from swiftform.api import api
 from openai import OpenAI
 from flask import request, jsonify, abort
 import json
+import os
 
 from flask_jwt_extended import jwt_required
+
+openai_enabled = os.environ.get("OPENAI_ENABLED", "false").lower() == "true"
 
 
 @api.route("prompt", methods=["POST"])
@@ -15,9 +18,23 @@ def generate_prompt():
         if not text:
             abort(400, description="Missing required parameter: text")
 
-        openai_response = json.loads(get_completion(create_prompt(text)))
+        if not openai_enabled:
+            return jsonify({"data": OPEN_AI_DUMMY_RESPONSE})
 
-        return jsonify({"data": openai_response})
+        prompt = create_prompt(text)
+
+        openai_response = get_completion(prompt)
+
+        if not openai_response:
+            abort(500, description="Error generating OpenAI response")
+
+        try:
+            serialized_openai_response = json.loads(openai_response)
+        except json.JSONDecodeError:
+            abort(500, description="Error parsing OpenAI response")
+
+        return jsonify({"data": serialized_openai_response.fields})
+
     except Exception as e:
         raise e
 
@@ -30,7 +47,8 @@ def create_prompt(text):
     prompt = f"""
     You will be provided with text delimited by triple backticks.
     This text will describe a form that you need to help create.
-    Your task is to provide an array of objects in JSON format.
+
+    Your task is to provide an array of objects in JSON format. Each item in the array should represent a field in the form. Each object should contain the following properties:
     - label: The label of the field.
     - name: The name attribute of the field.
     - type: The type of the input field (e.g., text, email, password).
@@ -59,7 +77,12 @@ def create_prompt(text):
 def get_completion(prompt, model="gpt-3.5-turbo"):
     messages = [{"role": "user", "content": prompt}]
     response = client.chat.completions.create(
-        model=model, messages=messages, temperature=0
+        response_format={
+            "type": "json_object",
+        },
+        model=model,
+        messages=messages,
+        temperature=0,
     )
 
     return response.choices[0].message.content
