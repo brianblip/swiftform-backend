@@ -31,6 +31,12 @@ RUN git clone https://github.com/openai/openai-python.git \
     && cd openai-python \
     && pip install -e . --target /usr/lib/python3.11/site-packages
 
+# Install python-email-validator
+RUN git clone --depth 1 https://github.com/JoshData/python-email-validator.git \
+    && cd python-email-validator \
+    && git checkout 676e0ab \
+    && python setup.py install --prefix /usr
+
 RUN adduser -D sf
 RUN mkdir -p /home/sf/app && chown -R sf:sf /home/sf/app
 RUN mkdir -p /var/log/flask-app && touch /var/log/flask-app/flask-app.err.log && touch /var/log/flask-app/flask-app.out.log
