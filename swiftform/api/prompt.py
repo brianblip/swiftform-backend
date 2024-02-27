@@ -1,8 +1,7 @@
 from swiftform.api import api
 from openai import OpenAI
-from flask import request, jsonify, abort
+from flask import request, jsonify, abort, current_app
 import json
-
 from flask_jwt_extended import jwt_required
 
 
@@ -15,8 +14,11 @@ def generate_prompt():
         if not text:
             abort(400, description="Missing required parameter: text")
 
-        prompt = create_prompt(text)
+        openai_enabled = current_app.config.get("OPEN_AI_ENABLED", False)
+        if not openai_enabled:
+            return jsonify({"data": OPEN_AI_DUMMY_RESPONSE})
 
+        prompt = create_prompt(text)
         openai_response = get_completion(prompt)
 
         if not openai_response:
@@ -96,66 +98,49 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
 
 
 # dummy response for when openai is disabled
-OPEN_AI_DUMMY_RESPONSE = [
-    {
-        "label": "Username",
-        "name": "username",
-        "type": "text",
-        "validations": [
-            {"message": "Username is required", "type": "required", "value": True},
-            {
-                "message": "Username must be at least 6 characters long",
-                "type": "minLength",
-                "value": 6,
-            },
-            {
-                "message": "Username cannot exceed 20 characters",
-                "type": "maxLength",
-                "value": 20,
-            },
-        ],
-    },
-    {
-        "label": "Email",
-        "name": "email",
-        "type": "email",
-        "validations": [
-            {"message": "Email is required", "type": "required", "value": True},
-            {
-                "message": "Invalid email format",
-                "type": "pattern",
-                "value": "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$",
-            },
-        ],
-    },
-    {
-        "label": "Password",
-        "name": "password",
-        "type": "password",
-        "validations": [
-            {"message": "Password is required", "type": "required", "value": True},
-            {
-                "message": "Password must be at least 8 characters long",
-                "type": "minLength",
-                "value": 8,
-            },
-        ],
-    },
-    {
-        "label": "Confirm Password",
-        "name": "confirmPassword",
-        "type": "password",
-        "validations": [
-            {
-                "message": "Confirm Password is required",
-                "type": "required",
-                "value": True,
-            },
-            {
-                "message": "Confirm Password must be at least 8 characters long",
-                "type": "minLength",
-                "value": 8,
-            },
-        ],
-    },
-]
+# prompt = create_prompt("Registration Form")
+OPEN_AI_DUMMY_RESPONSE = {
+    "description": "A form for users to register for an event.",
+    "name": "Registration Form",
+    "sections": [
+        {
+            "questions": [
+                {
+                    "order": 1,
+                    "prompt": "Enter your full name",
+                    "type": "text",
+                    "validations": [
+                        {
+                            "message": "Please enter your full name",
+                            "type": "required",
+                            "value": True,
+                        },
+                        {
+                            "message": "Name cannot exceed 50 characters",
+                            "type": "maxLength",
+                            "value": 50,
+                        },
+                    ],
+                },
+                {
+                    "order": 2,
+                    "prompt": "Enter your email address",
+                    "type": "text",
+                    "validations": [
+                        {
+                            "message": "Please enter your email address",
+                            "type": "required",
+                            "value": True,
+                        },
+                        {
+                            "message": "Please enter a valid email address",
+                            "type": "pattern",
+                            "value": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+                        },
+                    ],
+                },
+            ],
+            "title": "Personal Information",
+        }
+    ],
+}
