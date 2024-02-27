@@ -17,18 +17,21 @@ RUN apk update \
     && apk add py3-flask-cors
 
 # Install flask-jwt-extended
-RUN git clone https://github.com/vimalloc/flask-jwt-extended.git \
+RUN git clone --depth 1 https://github.com/vimalloc/flask-jwt-extended.git \
     && cd flask-jwt-extended \
+    && git checkout b483ff2 \
     && python setup.py install --prefix /usr
 
 # Install flask-alembic
-RUN git clone https://github.com/davidism/flask-alembic.git \
+RUN git clone --depth 1 https://github.com/davidism/flask-alembic.git \
     && cd flask-alembic \
+    && git checkout 823432c \
     && pip install --upgrade -e . --target /usr/lib/python3.11/site-packages
 
 # Install openai
-RUN git clone https://github.com/openai/openai-python.git \
+RUN git clone --depth 1 https://github.com/openai/openai-python.git \
     && cd openai-python \
+    && git checkout a7115b5 \
     && pip install -e . --target /usr/lib/python3.11/site-packages
 
 # Install python-email-validator
