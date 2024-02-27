@@ -2,7 +2,7 @@ FROM python:3.11.7-alpine
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV PYTHONPATH=/usr/lib/python3.11/site-packages/
+ENV PYTHONPATH=/usr/lib/python3.11/site-packages/:/home/sf/app/swiftform/
 
 RUN apk update \
     && apk add curl \
@@ -17,14 +17,28 @@ RUN apk update \
     && apk add py3-flask-cors
 
 # Install flask-jwt-extended
-RUN git clone https://github.com/vimalloc/flask-jwt-extended.git \
+RUN git clone --depth 1 https://github.com/vimalloc/flask-jwt-extended.git \
     && cd flask-jwt-extended \
+    && git checkout b483ff2 \
     && python setup.py install --prefix /usr
 
 # Install flask-alembic
-RUN git clone https://github.com/davidism/flask-alembic.git \
+RUN git clone --depth 1 https://github.com/davidism/flask-alembic.git \
     && cd flask-alembic \
+    && git checkout 823432c \
     && pip install --upgrade -e . --target /usr/lib/python3.11/site-packages
+
+# Install openai
+RUN git clone --depth 1 https://github.com/openai/openai-python.git \
+    && cd openai-python \
+    && git checkout a7115b5 \
+    && pip install -e . --target /usr/lib/python3.11/site-packages
+
+# Install python-email-validator
+RUN git clone --depth 1 https://github.com/JoshData/python-email-validator.git \
+    && cd python-email-validator \
+    && git checkout 676e0ab \
+    && python setup.py install --prefix /usr
 
 RUN adduser -D sf
 RUN mkdir -p /home/sf/app && chown -R sf:sf /home/sf/app
