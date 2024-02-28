@@ -10,9 +10,8 @@ from swiftform.decorators import require_fields
 @jwt_required()
 @require_fields(["title", "form_id"])
 def create_section():
-    data = request.json
-    title = data.get("title")
-    form_id = data.get("form_id")
+    title = request.json.get("title")
+    form_id = request.json.get("form_id")
 
     try:
         form = Form.query.get(form_id)
@@ -60,8 +59,6 @@ def get_section(section_id):
 @api.route("sections/<int:section_id>", methods=["PUT"])
 @jwt_required()
 def update_section(section_id):
-    data = request.json
-
     try:
         section = Section.query.get(section_id)
         if section is None:
@@ -77,7 +74,7 @@ def update_section(section_id):
         db.session.rollback()
         raise e
 
-    section.title = data.get("title")
+    section.title = request.json.get("title")
     db.session.commit()
 
     return jsonify({"data": section.serialize()}), 200

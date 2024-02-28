@@ -22,9 +22,8 @@ def get_forms():
 @jwt_required()
 @require_fields(["name"])
 def create_form():
-    data = request.json
-    name = data.get("name")
-    description = data.get("description", "")
+    name = request.json.get("name")
+    description = request.json.get("description", "")
 
     if len(name) < 2:
         abort(422, description="Form name must be at least 2 characters long")
@@ -115,9 +114,8 @@ def get_form(form_id):
 @jwt_required()
 @require_fields(["name"])
 def update_form(form_id):
-    data = request.json
-    name = data.get("name")
-    description = data.get("description", "")
+    name = request.json.get("name")
+    description = request.json.get("description", "")
 
     try:
         form = Form.query.get(form_id)
@@ -133,7 +131,7 @@ def update_form(form_id):
         if len(name) < 2:
             abort(422, description="Form name must be at least 2 characters long")
 
-        form.name = data.get("name")
+        form.name = request.json.get("name")
 
         if description:
             form.description = description

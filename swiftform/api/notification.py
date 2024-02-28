@@ -10,9 +10,8 @@ from swiftform.decorators import require_fields
 @jwt_required()
 @require_fields(["title", "message", "recipient_id"])
 def create_notification():
-    data = request.json
-    title = data["title"]
-    message = data["message"]
+    title = request.json["title"]
+    message = request.json["message"]
 
     try:
         new_notification = Notification(
@@ -32,12 +31,10 @@ def create_notification():
 @jwt_required()
 def get_notifications():
     try:
-        notifications = Notification.query.filter_by(
-            recipient_id=current_user.id).all()
+        notifications = Notification.query.filter_by(recipient_id=current_user.id).all()
     except Exception as e:
         raise e
 
-    notification_list = [notification.serialize()
-                         for notification in notifications]
+    notification_list = [notification.serialize() for notification in notifications]
 
     return jsonify({"data": notification_list}), 200

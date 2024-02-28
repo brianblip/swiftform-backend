@@ -10,8 +10,7 @@ from swiftform.decorators import require_fields
 @jwt_required()
 @require_fields(["form_id"])
 def create_response():
-    data = request.json
-    form_id = data.get("form_id")
+    form_id = request.json.get("form_id")
 
     try:
         form = Form.query.get(form_id)

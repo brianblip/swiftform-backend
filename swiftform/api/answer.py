@@ -10,10 +10,9 @@ from swiftform.app import db
 @jwt_required()
 @require_fields(["response_id", "question_id", "text"])
 def create_answer():
-    data = request.json
-    response_id = data.get("response_id")
-    question_id = data.get("question_id")
-    text = data.get("text")
+    response_id = request.json.get("response_id")
+    question_id = request.json.get("question_id")
+    text = request.json.get("text")
 
     try:
         question = Question.query.get(question_id)
@@ -23,8 +22,7 @@ def create_answer():
         raise e
 
     try:
-        answer = Answer(response_id=response_id,
-                        question_id=question_id, text=text)
+        answer = Answer(response_id=response_id, question_id=question_id, text=text)
 
         db.session.add(answer)
         db.session.commit()
@@ -52,8 +50,7 @@ def get_answer(answer_id):
 @jwt_required()
 @require_fields(["text"])
 def update_answer(answer_id):
-    data = request.json
-    text = data.get("text")
+    text = request.json.get("text")
 
     try:
         answer = Answer.query.get(answer_id)

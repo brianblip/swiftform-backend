@@ -10,10 +10,9 @@ from swiftform.decorators import require_fields
 @jwt_required()
 @require_fields(["text", "order", "question_id"])
 def create_choice():
-    data = request.json
-    text = data.get("text")
-    question_id = data.get("question_id")
-    order = data.get("order")
+    text = request.json.get("text")
+    question_id = request.json.get("question_id")
+    order = request.json.get("order")
 
     try:
         question = Question.query.get(question_id)
@@ -51,8 +50,7 @@ def get_choice(choice_id):
 @jwt_required()
 @require_fields(["text"])
 def update_choice(choice_id):
-    data = request.json
-    text = data.get("text")
+    text = request.json.get("text")
 
     try:
         choice = Choice.query.get(choice_id)
