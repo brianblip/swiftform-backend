@@ -13,7 +13,7 @@ class Required(ValidationRule):
             attributes = [attributes]
 
         for attribute in attributes:
-            if attribute not in request.json.keys():
+            if attribute not in request.json.keys() or not request.json[attribute]:
                 raise ValidationRuleError(attribute, f"The {attribute} is required.")
 
         pass

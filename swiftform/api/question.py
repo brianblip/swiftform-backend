@@ -4,13 +4,25 @@ from flask_jwt_extended import jwt_required
 from datetime import datetime
 from swiftform.models import Question, Section
 from swiftform.app import db
-from swiftform.decorators import require_fields
+from swiftform.validation.validation import ValidationRuleErrors, validate
+from swiftform.validation.rules import Required
 
 
 @api.route("questions", methods=["POST"])
 @jwt_required()
-@require_fields(["type", "prompt", "section_id", "order"])
 def create_question():
+    try:
+        validate(
+            [
+                Required("type"),
+                Required("prompt"),
+                Required("section_id"),
+                Required("order"),
+            ]
+        )
+    except ValidationRuleErrors as e:
+        raise e
+
     type = request.json.get("type")
     prompt = request.json.get("prompt")
     section_id = request.json.get("section_id")
@@ -60,8 +72,12 @@ def get_question(question_id):
 
 @api.route("questions/<int:question_id>", methods=["PUT"])
 @jwt_required()
-@require_fields(["type", "prompt"])
 def update_question(question_id):
+    try:
+        validate([Required("type"), Required("prompt"), Required("section_id")])
+    except ValidationRuleErrors as e:
+        raise e
+
     prompt = request.json.get("prompt")
 
     if len(prompt) < 2:

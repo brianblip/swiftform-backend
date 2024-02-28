@@ -4,8 +4,9 @@ from swiftform.models import Form, Section, Question, QuestionType
 from swiftform.app import db
 from flask_jwt_extended import jwt_required, current_user
 from datetime import datetime
-from swiftform.decorators import require_fields
 from werkzeug.exceptions import Unauthorized
+from swiftform.validation.validation import ValidationRuleErrors, validate
+from swiftform.validation.rules import Required
 
 
 @api.route("forms", methods=["GET"])
@@ -21,8 +22,12 @@ def get_forms():
 
 @api.route("forms", methods=["POST"])
 @jwt_required()
-@require_fields(["name"])
 def create_form():
+    try:
+        validate([Required("name")])
+    except ValidationRuleErrors as e:
+        raise e
+
     name = request.json.get("name")
     description = request.json.get("description", "")
 
@@ -113,8 +118,12 @@ def get_form(form_id):
 
 @api.route("forms/<int:form_id>", methods=["PUT"])
 @jwt_required()
-@require_fields(["name"])
 def update_form(form_id):
+    try:
+        validate([Required("name")])
+    except ValidationRuleErrors as e:
+        raise e
+
     name = request.json.get("name")
     description = request.json.get("description", "")
 

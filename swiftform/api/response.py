@@ -3,13 +3,19 @@ from flask import jsonify, request, abort
 from flask_jwt_extended import jwt_required, current_user
 from swiftform.models import Response, Form
 from swiftform.app import db
-from swiftform.decorators import require_fields
+from swiftform.validation.validation import ValidationRuleErrors, validate
+from swiftform.validation.rules import Required
+from werkzeug.exceptions import Unauthorized
 
 
 @api.route("responses", methods=["POST"])
 @jwt_required()
-@require_fields(["form_id"])
 def create_response():
+    try:
+        validate([Required("form_id")])
+    except ValidationRuleErrors as e:
+        raise e
+
     form_id = request.json.get("form_id")
 
     try:
@@ -20,10 +26,7 @@ def create_response():
         raise e
 
     if form.user_id != current_user.id:
-        abort(
-            401,
-            description="You are not authorized to submit a response for this form",
-        )
+        raise Unauthorized
     try:
         response = Response(form_id=form_id, user_id=current_user.id)
         db.session.add(response)
@@ -61,7 +64,7 @@ def delete_response(response_id):
         raise e
 
     if response.user_id != current_user.id:
-        abort(401, description="You are not authorized to delete this response")
+        raise Unauthorized
 
     try:
         db.session.delete(response)

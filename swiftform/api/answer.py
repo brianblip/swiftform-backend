@@ -1,15 +1,20 @@
 from swiftform.api import api
 from flask import jsonify, request, abort
-from flask_jwt_extended import jwt_required
 from swiftform.models import Answer, Question
-from swiftform.decorators import require_fields
+from swiftform.validation.validation import ValidationRuleErrors, validate
+from swiftform.validation.rules import Required
+from flask_jwt_extended import jwt_required
 from swiftform.app import db
 
 
 @api.route("answers", methods=["POST"])
 @jwt_required()
-@require_fields(["response_id", "question_id", "text"])
 def create_answer():
+    try:
+        validate([Required("response_id"), Required("question_id"), Required("text")])
+    except ValidationRuleErrors as e:
+        raise e
+
     response_id = request.json.get("response_id")
     question_id = request.json.get("question_id")
     text = request.json.get("text")
@@ -48,8 +53,12 @@ def get_answer(answer_id):
 
 @api.route("answers/<int:answer_id>", methods=["PUT"])
 @jwt_required()
-@require_fields(["text"])
 def update_answer(answer_id):
+    try:
+        validate([Required("text")])
+    except ValidationRuleErrors as e:
+        raise e
+
     text = request.json.get("text")
 
     try:

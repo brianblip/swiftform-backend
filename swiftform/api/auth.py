@@ -3,7 +3,8 @@ from flask import request, jsonify, abort
 from swiftform.models import User
 from swiftform.app import db
 from email_validator import validate_email, EmailNotValidError
-from swiftform.decorators import require_fields
+from swiftform.validation.validation import ValidationRuleErrors, validate
+from swiftform.validation.rules import Required
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import (
     create_access_token,
@@ -13,8 +14,12 @@ from flask_jwt_extended import (
 
 
 @api.route("auth/register", methods=["POST"])
-@require_fields(["name", "email", "password"])
 def register_user():
+    try:
+        validate([Required("name"), Required("email"), Required("password")])
+    except ValidationRuleErrors as e:
+        raise e
+
     name = request.json.get("name")
     email = request.json.get("email")
     password = request.json.get("password")
@@ -63,8 +68,12 @@ def register_user():
 
 
 @api.route("auth/login", methods=["POST"])
-@require_fields(["email", "password"])
 def login_user():
+    try:
+        validate([Required("email"), Required("password")])
+    except ValidationRuleErrors as e:
+        raise e
+
     email = request.json.get("email")
     password = request.json.get("password")
 

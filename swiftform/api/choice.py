@@ -3,13 +3,18 @@ from flask import jsonify, request, abort
 from flask_jwt_extended import jwt_required
 from swiftform.app import db
 from swiftform.models import Choice, Question
-from swiftform.decorators import require_fields
+from swiftform.validation.validation import ValidationRuleErrors, validate
+from swiftform.validation.rules import Required
 
 
 @api.route("choices", methods=["POST"])
 @jwt_required()
-@require_fields(["text", "order", "question_id"])
 def create_choice():
+    try:
+        validate([Required("text"), Required("question_id"), Required("order")])
+    except ValidationRuleErrors as e:
+        raise e
+
     text = request.json.get("text")
     question_id = request.json.get("question_id")
     order = request.json.get("order")
@@ -48,8 +53,12 @@ def get_choice(choice_id):
 
 @api.route("choices/<int:choice_id>", methods=["PUT"])
 @jwt_required()
-@require_fields(["text"])
 def update_choice(choice_id):
+    try:
+        validate([Required("text")])
+    except ValidationRuleErrors as e:
+        raise e
+
     text = request.json.get("text")
 
     try:

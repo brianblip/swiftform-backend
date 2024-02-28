@@ -3,14 +3,19 @@ from flask import jsonify, request, abort
 from flask_jwt_extended import jwt_required, current_user
 from swiftform.app import db
 from swiftform.models import Section, Form
-from swiftform.decorators import require_fields
 from werkzeug.exceptions import Unauthorized
+from swiftform.validation.validation import ValidationRuleErrors, validate
+from swiftform.validation.rules import Required
 
 
 @api.route("sections", methods=["POST"])
 @jwt_required()
-@require_fields(["title", "form_id"])
 def create_section():
+    try:
+        validate([Required("title"), Required("form_id")])
+    except ValidationRuleErrors as e:
+        raise e
+
     title = request.json.get("title")
     form_id = request.json.get("form_id")
 
