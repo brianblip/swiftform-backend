@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required, current_user
 from swiftform.app import db
 from swiftform.models import Section, Form
 from swiftform.decorators import require_fields
+from werkzeug.exceptions import Unauthorized
 
 
 @api.route("sections", methods=["POST"])
@@ -22,7 +23,7 @@ def create_section():
         raise e
 
     if form.user_id != current_user.id:
-        abort(401, description="You are not the owner of this form")
+        raise Unauthorized
 
     try:
         new_section = Section(title=title, form_id=form_id)
@@ -48,7 +49,7 @@ def get_section(section_id):
     try:
         form = Form.query.get(section.form_id)
         if form.user_id != current_user.id:
-            abort(401, description="You are not the owner of this form")
+            raise Unauthorized
     except Exception as e:
         db.session.rollback()
         raise e
@@ -69,7 +70,7 @@ def update_section(section_id):
     try:
         form = Form.query.get(section.form_id)
         if form.user_id != current_user.id:
-            abort(401, description="You are not the owner of this form")
+            raise Unauthorized
     except Exception as e:
         db.session.rollback()
         raise e
@@ -93,7 +94,7 @@ def delete_section(section_id):
     try:
         form = Form.query.get(section.form_id)
         if form.user_id != current_user.id:
-            abort(401, description="You are not the owner of this form")
+            raise Unauthorized
     except Exception as e:
         db.session.rollback()
         raise e

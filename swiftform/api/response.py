@@ -42,22 +42,12 @@ def create_response():
 @api.route("responses", methods=["GET"])
 @jwt_required()
 def get_responses():
-    form_id = request.args.get("form_id")
     try:
-        form = Form.query.get(form_id)
-        if form is None:
-            abort(404, description="Form not found")
+        responses = Response.query.filter_by(user_id=current_user.id).all()
     except Exception as e:
         raise e
 
-    if form.user_id != current_user.id:
-        abort(403, description="You are not authorized to view responses for this form")
-
-    responses = Response.query.filter_by(form_id=form_id).all()
-
-    response_list = [response.serialize() for response in responses]
-
-    return jsonify({"data": response_list}), 200
+    return jsonify({"data": [response.serialize() for response in responses]}), 200
 
 
 @api.route("responses/<int:response_id>", methods=["DELETE"])

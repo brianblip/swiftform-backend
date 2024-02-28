@@ -5,6 +5,7 @@ from swiftform.app import db
 from flask_jwt_extended import jwt_required, current_user
 from datetime import datetime
 from swiftform.decorators import require_fields
+from werkzeug.exceptions import Unauthorized
 
 
 @api.route("forms", methods=["GET"])
@@ -105,7 +106,7 @@ def get_form(form_id):
         raise e
 
     if form.user_id != current_user.id:
-        abort(401, description="You are not authorized to view this form")
+        raise Unauthorized
 
     return jsonify({"data": form.serialize()}), 200
 
@@ -125,7 +126,7 @@ def update_form(form_id):
         raise e
 
     if form.user_id != current_user.id:
-        abort(401, description="You are not authorized to update this form")
+        raise Unauthorized
 
     try:
         if len(name) < 2:
@@ -157,7 +158,7 @@ def delete_form(form_id):
         abort(404, description="Form not found")
 
     if form.user_id != current_user.id:
-        abort(401, description="You are not authorized to delete this form")
+        raise Unauthorized
 
     try:
         db.session.delete(form)
