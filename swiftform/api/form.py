@@ -41,7 +41,7 @@ def create_form():
     return jsonify({"data": new_form.serialize()}), 201
 
 
-@api.route("/forms/nested", methods=["POST"])
+@api.route("forms/nested", methods=["POST"])
 @jwt_required()
 def create_nested_form():
     form_name = request.json.get("name")
