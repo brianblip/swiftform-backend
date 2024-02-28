@@ -66,7 +66,7 @@ def create_prompt(text):
     - message: The error message to display if the validation fails.
 
     Supported questions types are:
-    - text: A single-line text field.
+    - textfield: A single-line text field.
 
     Supported validations are:
     - required: The field is required.
@@ -108,7 +108,7 @@ OPEN_AI_DUMMY_RESPONSE = {
                 {
                     "order": 1,
                     "prompt": "Enter your full name",
-                    "type": "text",
+                    "type": "textfield",
                     "validations": [
                         {
                             "message": "Please enter your full name",
@@ -125,7 +125,7 @@ OPEN_AI_DUMMY_RESPONSE = {
                 {
                     "order": 2,
                     "prompt": "Enter your email address",
-                    "type": "text",
+                    "type": "textfield",
                     "validations": [
                         {
                             "message": "Please enter your email address",
