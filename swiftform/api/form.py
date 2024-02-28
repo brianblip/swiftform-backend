@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, current_user
 from datetime import datetime
 from werkzeug.exceptions import Unauthorized
 from swiftform.validation.validation import ValidationRuleErrors, validate
-from swiftform.validation.rules import Required
+from swiftform.validation.rules import Required, MinLength
 
 
 @api.route("forms", methods=["GET"])
@@ -24,15 +24,12 @@ def get_forms():
 @jwt_required()
 def create_form():
     try:
-        validate([Required("name")])
+        validate([Required("name"), MinLength("name", 2)])
     except ValidationRuleErrors as e:
         raise e
 
     name = request.json.get("name")
     description = request.json.get("description", "")
-
-    if len(name) < 2:
-        abort(422, description="Form name must be at least 2 characters long")
 
     try:
         new_form = Form(name=name, description=description, user_id=current_user.id)
@@ -120,11 +117,10 @@ def get_form(form_id):
 @jwt_required()
 def update_form(form_id):
     try:
-        validate([Required("name")])
+        validate([Required("name"), MinLength("name", 2)])
     except ValidationRuleErrors as e:
         raise e
 
-    name = request.json.get("name")
     description = request.json.get("description", "")
 
     try:
@@ -138,9 +134,6 @@ def update_form(form_id):
         raise Unauthorized
 
     try:
-        if len(name) < 2:
-            abort(422, description="Form name must be at least 2 characters long")
-
         form.name = request.json.get("name")
 
         if description:

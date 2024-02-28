@@ -41,3 +41,22 @@ class ValidEmail(ValidationRule):
                 ) from e
 
         pass
+
+
+class MinLength(ValidationRule):
+    def __init__(self, attribute, length):
+        self.attribute = attribute
+        self.length = length
+
+    def validate(self) -> None:
+        attribute = self.attribute
+        length = self.length
+
+        value = request.json.get(attribute)
+
+        if len(value) < length:
+            raise ValidationRuleError(
+                attribute, f"The {attribute} must be at least {length} characters long."
+            )
+
+        pass

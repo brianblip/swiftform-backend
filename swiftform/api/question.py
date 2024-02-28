@@ -5,7 +5,7 @@ from datetime import datetime
 from swiftform.models import Question, Section
 from swiftform.app import db
 from swiftform.validation.validation import ValidationRuleErrors, validate
-from swiftform.validation.rules import Required
+from swiftform.validation.rules import Required, MinLength
 
 
 @api.route("questions", methods=["POST"])
@@ -18,6 +18,7 @@ def create_question():
                 Required("prompt"),
                 Required("section_id"),
                 Required("order"),
+                MinLength("prompt", 2),
             ]
         )
     except ValidationRuleErrors as e:
@@ -27,9 +28,6 @@ def create_question():
     prompt = request.json.get("prompt")
     section_id = request.json.get("section_id")
     order = request.json.get("order")
-
-    if len(prompt) < 2:
-        abort(422, description="Question prompt must be at least 2 characters long")
 
     try:
         section = Section.query.get(section_id)
@@ -74,14 +72,16 @@ def get_question(question_id):
 @jwt_required()
 def update_question(question_id):
     try:
-        validate([Required("type"), Required("prompt"), Required("section_id")])
+        validate(
+            [
+                Required("type"),
+                Required("prompt"),
+                Required("section_id"),
+                MinLength("prompt", 2),
+            ]
+        )
     except ValidationRuleErrors as e:
         raise e
-
-    prompt = request.json.get("prompt")
-
-    if len(prompt) < 2:
-        abort(400, description="Question prompt must be at least 2 characters long")
 
     try:
         question = Question.query.get(question_id)
