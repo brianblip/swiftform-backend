@@ -1,6 +1,6 @@
 from swiftform.api import api
 from flask import request, jsonify, abort
-from swiftform.models import Form
+from swiftform.models import Form, Section, Question, QuestionType
 from swiftform.app import db
 from flask_jwt_extended import jwt_required, current_user
 from datetime import datetime
@@ -30,8 +30,7 @@ def create_form():
         abort(422, description="Form name must be at least 2 characters long")
 
     try:
-        new_form = Form(name=name, description=description,
-                        user_id=current_user.id)
+        new_form = Form(name=name, description=description, user_id=current_user.id)
 
         db.session.add(new_form)
         db.session.commit()
@@ -40,6 +39,60 @@ def create_form():
         raise e
 
     return jsonify({"data": new_form.serialize()}), 201
+
+
+@api.route("/forms/nested", methods=["POST"])
+@jwt_required()
+def create_nested_form():
+    form_name = request.json.get("name")
+    form_description = request.json.get("description")
+
+    try:
+        new_form = Form(
+            name=form_name, description=form_description, user_id=current_user.id
+        )
+        db.session.add(new_form)
+        db.session.flush()
+
+        sections = request.json.get("sections")
+        for section in sections:
+            new_section = Section(title=section["title"], form_id=new_form.id)
+            db.session.add(new_section)
+            db.session.flush()
+
+            questions = section["questions"]
+            for question in questions:
+                print("checking question type")
+                print(question["type"])
+                validations = question["validations"]
+                # check if question has a validation with type "required"
+                required_validation = next(
+                    (
+                        validation
+                        for validation in validations
+                        if validation["type"] == "required"
+                    ),
+                    None,
+                )
+
+                question_type = QuestionType[question["type"].upper()]
+
+                new_question = Question(
+                    order=question["order"],
+                    prompt=question["prompt"],
+                    type=question_type,
+                    section_id=new_section.id,
+                    is_required=required_validation is not None,
+                )
+
+                db.session.add(new_question)
+
+        db.session.commit()
+
+        return jsonify({"data": new_form.serialize()}), 201
+    except Exception as e:
+        db.session.rollback()
+        raise e
 
 
 @api.route("forms/<int:form_id>", methods=["GET"])
