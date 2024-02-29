@@ -1,11 +1,11 @@
 from swiftform.api import api
-from flask import jsonify, request, abort
+from flask import jsonify, request
 from flask_jwt_extended import jwt_required, current_user
 from swiftform.models import Response, Form
 from swiftform.app import db
 from swiftform.validation.validation import ValidationRuleErrors, validate
 from swiftform.validation.rules import Required
-from werkzeug.exceptions import Unauthorized
+from werkzeug.exceptions import Unauthorized, NotFound
 
 
 @api.route("responses", methods=["POST"])
@@ -21,7 +21,7 @@ def create_response():
     try:
         form = Form.query.get(form_id)
         if form is None:
-            abort(404, description="Form not found")
+            raise NotFound
     except Exception as e:
         raise e
 
@@ -59,7 +59,7 @@ def delete_response(response_id):
     try:
         response = Response.query.get(response_id)
         if response is None:
-            abort(404, description="Response not found")
+            raise NotFound
     except Exception as e:
         raise e
 

@@ -1,10 +1,11 @@
 from swiftform.api import api
-from flask import jsonify, request, abort
+from flask import jsonify, request
 from flask_jwt_extended import jwt_required
 from swiftform.app import db
 from swiftform.models import Choice, Question
 from swiftform.validation.validation import ValidationRuleErrors, validate
 from swiftform.validation.rules import Required
+from werkzeug.exceptions import NotFound
 
 
 @api.route("choices", methods=["POST"])
@@ -22,7 +23,7 @@ def create_choice():
     try:
         question = Question.query.get(question_id)
         if question is None:
-            abort(404, description="Question not found")
+            raise NotFound
     except Exception as e:
         db.session.rollback()
         raise e
@@ -44,7 +45,7 @@ def get_choice(choice_id):
     try:
         choice = Choice.query.get(choice_id)
         if choice is None:
-            abort(404, description="Choice not found")
+            raise NotFound
     except Exception as e:
         raise e
 
@@ -64,7 +65,7 @@ def update_choice(choice_id):
     try:
         choice = Choice.query.get(choice_id)
         if choice is None:
-            abort(404, description="Choice not found")
+            raise NotFound
     except Exception as e:
         raise e
 
@@ -83,7 +84,7 @@ def delete_choice(choice_id):
     try:
         choice = Choice.query.get(choice_id)
         if choice is None:
-            abort(404, description="Choice not found")
+            raise NotFound
     except Exception as e:
         raise e
 

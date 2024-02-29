@@ -1,10 +1,10 @@
 from swiftform.api import api
-from flask import request, jsonify, abort
-from swiftform.models import Form, Section, Question, QuestionType
+from flask import request, jsonify
+from swiftform.models import Form
 from swiftform.app import db
 from flask_jwt_extended import jwt_required, current_user
 from datetime import datetime
-from werkzeug.exceptions import Unauthorized
+from werkzeug.exceptions import Unauthorized, NotFound
 from swiftform.validation.validation import ValidationRuleErrors, validate
 from swiftform.validation.rules import Required, MinLength
 
@@ -103,7 +103,7 @@ def get_form(form_id):
     try:
         form = Form.query.get(form_id)
         if form is None:
-            abort(404, description="Form not found")
+            raise NotFound
     except Exception as e:
         raise e
 
@@ -126,7 +126,7 @@ def update_form(form_id):
     try:
         form = Form.query.get(form_id)
         if form is None:
-            abort(404, description="Form not found")
+            raise NotFound
     except Exception as e:
         raise e
 
@@ -153,11 +153,10 @@ def update_form(form_id):
 def delete_form(form_id):
     try:
         form = Form.query.get(form_id)
+        if form is None:
+            raise NotFound
     except Exception as e:
         raise e
-
-    if form is None:
-        abort(404, description="Form not found")
 
     if form.user_id != current_user.id:
         raise Unauthorized

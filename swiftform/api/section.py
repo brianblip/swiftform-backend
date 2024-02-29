@@ -1,9 +1,9 @@
 from swiftform.api import api
-from flask import jsonify, request, abort
+from flask import jsonify, request
 from flask_jwt_extended import jwt_required, current_user
 from swiftform.app import db
 from swiftform.models import Section, Form
-from werkzeug.exceptions import Unauthorized
+from werkzeug.exceptions import Unauthorized, NotFound
 from swiftform.validation.validation import ValidationRuleErrors, validate
 from swiftform.validation.rules import Required
 
@@ -22,7 +22,7 @@ def create_section():
     try:
         form = Form.query.get(form_id)
         if form is None:
-            abort(404, description="Form not found")
+            raise NotFound
     except Exception as e:
         db.session.rollback()
         raise e
@@ -47,7 +47,7 @@ def get_section(section_id):
     try:
         section = Section.query.get(section_id)
         if section is None:
-            abort(404, description="Section not found")
+            raise NotFound
     except Exception as e:
         raise e
 
@@ -68,7 +68,7 @@ def update_section(section_id):
     try:
         section = Section.query.get(section_id)
         if section is None:
-            abort(404, description="Section not found")
+            raise NotFound
     except Exception as e:
         raise e
 
@@ -92,7 +92,7 @@ def delete_section(section_id):
     try:
         section = Section.query.get(section_id)
         if section is None:
-            abort(404, description="Section not found")
+            raise NotFound
     except Exception as e:
         raise e
 

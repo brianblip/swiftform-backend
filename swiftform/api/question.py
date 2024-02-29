@@ -1,11 +1,12 @@
 from swiftform.api import api
-from flask import request, jsonify, abort
+from flask import request, jsonify
 from flask_jwt_extended import jwt_required
 from datetime import datetime
 from swiftform.models import Question, Section
 from swiftform.app import db
 from swiftform.validation.validation import ValidationRuleErrors, validate
 from swiftform.validation.rules import Required, MinLength
+from werkzeug.exceptions import NotFound
 
 
 @api.route("questions", methods=["POST"])
@@ -31,9 +32,8 @@ def create_question():
 
     try:
         section = Section.query.get(section_id)
-
         if section is None:
-            abort(404, description="Section not found")
+            raise NotFound
     except Exception as e:
         raise e
 
@@ -61,7 +61,7 @@ def get_question(question_id):
     try:
         question = Question.query.get(question_id)
         if question is None:
-            abort(404, description="Question not found")
+            raise NotFound
     except Exception as e:
         raise e
 
@@ -82,11 +82,10 @@ def update_question(question_id):
         )
     except ValidationRuleErrors as e:
         raise e
-
     try:
         question = Question.query.get(question_id)
         if question is None:
-            abort(404, description="Question not found")
+            raise NotFound
     except Exception as e:
         raise e
 
@@ -98,7 +97,7 @@ def update_question(question_id):
         db.session.rollback()
         raise e
     if section is None:
-        abort(404, description="Section not found")
+        raise NotFound
 
     question.type = request.json["type"]
     question.prompt = request.json["prompt"]
@@ -117,7 +116,7 @@ def delete_question(question_id):
     try:
         question = Question.query.get(question_id)
         if question is None:
-            abort(404, description="Question not found")
+            raise NotFound
     except Exception as e:
         raise e
 

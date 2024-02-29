@@ -4,7 +4,7 @@ from swiftform.models import User
 from swiftform.app import db
 
 from swiftform.validation.validation import ValidationRuleErrors, validate
-from swiftform.validation.rules import Required, ValidEmail
+from swiftform.validation.rules import Required, ValidEmail, MinLength
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import (
     create_access_token,
@@ -16,7 +16,14 @@ from flask_jwt_extended import (
 @api.route("auth/register", methods=["POST"])
 def register_user():
     try:
-        validate([Required("name"), Required("email"), Required("password")])
+        validate(
+            [
+                Required("name"),
+                Required("email"),
+                Required("password"),
+                MinLength("password", 8),
+            ]
+        )
         validate([ValidEmail("email")])
 
     except ValidationRuleErrors as e:
@@ -26,9 +33,6 @@ def register_user():
     email = request.json.get("email")
     password = request.json.get("password")
     avatar_url = request.json.get("avatar_url")
-
-    if len(password) < 8:
-        abort(422, description="Password must be at least 8 characters long")
 
     try:
         user = User.query.filter_by(email=email).first()
