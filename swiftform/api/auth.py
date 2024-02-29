@@ -2,8 +2,9 @@ from swiftform.api import api
 from flask import request, jsonify, abort
 from swiftform.models import User
 from swiftform.app import db
-from email_validator import validate_email, EmailNotValidError
-from swiftform.decorators import require_fields
+
+from swiftform.validation.validation import ValidationRuleErrors, validate
+from swiftform.validation.rules import Required, ValidEmail
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import (
     create_access_token,
@@ -13,17 +14,18 @@ from flask_jwt_extended import (
 
 
 @api.route("auth/register", methods=["POST"])
-@require_fields(["name", "email", "password"])
 def register_user():
+    try:
+        validate([Required("name"), Required("email"), Required("password")])
+        validate([ValidEmail("email")])
+
+    except ValidationRuleErrors as e:
+        raise e
+
     name = request.json.get("name")
     email = request.json.get("email")
     password = request.json.get("password")
     avatar_url = request.json.get("avatar_url")
-
-    try:
-        validate_email(email)
-    except EmailNotValidError:
-        abort(400, description="Invalid email")
 
     if len(password) < 8:
         abort(422, description="Password must be at least 8 characters long")
@@ -63,15 +65,15 @@ def register_user():
 
 
 @api.route("auth/login", methods=["POST"])
-@require_fields(["email", "password"])
 def login_user():
+    try:
+        validate([Required("email"), Required("password")])
+        validate([ValidEmail("email")])
+    except ValidationRuleErrors as e:
+        raise e
+
     email = request.json.get("email")
     password = request.json.get("password")
-
-    try:
-        validate_email(email)
-    except EmailNotValidError:
-        abort(400, description="Invalid email")
 
     try:
         user = User.query.filter_by(email=email).first()

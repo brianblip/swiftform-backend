@@ -3,16 +3,21 @@ from flask import jsonify, request, abort
 from flask_jwt_extended import jwt_required, current_user
 from swiftform.app import db
 from swiftform.models import Section, Form
-from swiftform.decorators import require_fields
+from werkzeug.exceptions import Unauthorized
+from swiftform.validation.validation import ValidationRuleErrors, validate
+from swiftform.validation.rules import Required
 
 
 @api.route("sections", methods=["POST"])
 @jwt_required()
-@require_fields(["title", "form_id"])
 def create_section():
-    data = request.json
-    title = data.get("title")
-    form_id = data.get("form_id")
+    try:
+        validate([Required("title"), Required("form_id")])
+    except ValidationRuleErrors as e:
+        raise e
+
+    title = request.json.get("title")
+    form_id = request.json.get("form_id")
 
     try:
         form = Form.query.get(form_id)
@@ -23,7 +28,7 @@ def create_section():
         raise e
 
     if form.user_id != current_user.id:
-        abort(401, description="You are not the owner of this form")
+        raise Unauthorized
 
     try:
         new_section = Section(title=title, form_id=form_id)
@@ -49,7 +54,7 @@ def get_section(section_id):
     try:
         form = Form.query.get(section.form_id)
         if form.user_id != current_user.id:
-            abort(401, description="You are not the owner of this form")
+            raise Unauthorized
     except Exception as e:
         db.session.rollback()
         raise e
@@ -60,8 +65,6 @@ def get_section(section_id):
 @api.route("sections/<int:section_id>", methods=["PUT"])
 @jwt_required()
 def update_section(section_id):
-    data = request.json
-
     try:
         section = Section.query.get(section_id)
         if section is None:
@@ -72,12 +75,12 @@ def update_section(section_id):
     try:
         form = Form.query.get(section.form_id)
         if form.user_id != current_user.id:
-            abort(401, description="You are not the owner of this form")
+            raise Unauthorized
     except Exception as e:
         db.session.rollback()
         raise e
 
-    section.title = data.get("title")
+    section.title = request.json.get("title")
     db.session.commit()
 
     return jsonify({"data": section.serialize()}), 200
@@ -96,7 +99,7 @@ def delete_section(section_id):
     try:
         form = Form.query.get(section.form_id)
         if form.user_id != current_user.id:
-            abort(401, description="You are not the owner of this form")
+            raise Unauthorized
     except Exception as e:
         db.session.rollback()
         raise e

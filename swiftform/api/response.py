@@ -3,15 +3,20 @@ from flask import jsonify, request, abort
 from flask_jwt_extended import jwt_required, current_user
 from swiftform.models import Response, Form
 from swiftform.app import db
-from swiftform.decorators import require_fields
+from swiftform.validation.validation import ValidationRuleErrors, validate
+from swiftform.validation.rules import Required
+from werkzeug.exceptions import Unauthorized
 
 
 @api.route("responses", methods=["POST"])
 @jwt_required()
-@require_fields(["form_id"])
 def create_response():
-    data = request.json
-    form_id = data.get("form_id")
+    try:
+        validate([Required("form_id")])
+    except ValidationRuleErrors as e:
+        raise e
+
+    form_id = request.json.get("form_id")
 
     try:
         form = Form.query.get(form_id)
@@ -21,10 +26,7 @@ def create_response():
         raise e
 
     if form.user_id != current_user.id:
-        abort(
-            401,
-            description="You are not authorized to submit a response for this form",
-        )
+        raise Unauthorized
     try:
         response = Response(form_id=form_id, user_id=current_user.id)
         db.session.add(response)
@@ -43,22 +45,12 @@ def create_response():
 @api.route("responses", methods=["GET"])
 @jwt_required()
 def get_responses():
-    form_id = request.args.get("form_id")
     try:
-        form = Form.query.get(form_id)
-        if form is None:
-            abort(404, description="Form not found")
+        responses = Response.query.filter_by(user_id=current_user.id).all()
     except Exception as e:
         raise e
 
-    if form.user_id != current_user.id:
-        abort(403, description="You are not authorized to view responses for this form")
-
-    responses = Response.query.filter_by(form_id=form_id).all()
-
-    response_list = [response.serialize() for response in responses]
-
-    return jsonify({"data": response_list}), 200
+    return jsonify({"data": [response.serialize() for response in responses]}), 200
 
 
 @api.route("responses/<int:response_id>", methods=["DELETE"])
@@ -72,7 +64,7 @@ def delete_response(response_id):
         raise e
 
     if response.user_id != current_user.id:
-        abort(401, description="You are not authorized to delete this response")
+        raise Unauthorized
 
     try:
         db.session.delete(response)

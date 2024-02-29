@@ -3,16 +3,20 @@ from flask import jsonify, request
 from flask_jwt_extended import jwt_required, current_user
 from swiftform.models import Notification
 from swiftform.app import db
-from swiftform.decorators import require_fields
+from swiftform.validation.validation import ValidationRuleErrors, validate
+from swiftform.validation.rules import Required
 
 
 @api.route("notifications", methods=["POST"])
 @jwt_required()
-@require_fields(["title", "message", "recipient_id"])
 def create_notification():
-    data = request.json
-    title = data["title"]
-    message = data["message"]
+    try:
+        validate([Required("title"), Required("message")])
+    except ValidationRuleErrors as e:
+        raise e
+
+    title = request.json["title"]
+    message = request.json["message"]
 
     try:
         new_notification = Notification(
@@ -32,12 +36,10 @@ def create_notification():
 @jwt_required()
 def get_notifications():
     try:
-        notifications = Notification.query.filter_by(
-            recipient_id=current_user.id).all()
+        notifications = Notification.query.filter_by(recipient_id=current_user.id).all()
     except Exception as e:
         raise e
 
-    notification_list = [notification.serialize()
-                         for notification in notifications]
+    notification_list = [notification.serialize() for notification in notifications]
 
     return jsonify({"data": notification_list}), 200

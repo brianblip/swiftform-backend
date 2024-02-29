@@ -4,7 +4,9 @@ from swiftform.models import Form, Section, Question, QuestionType
 from swiftform.app import db
 from flask_jwt_extended import jwt_required, current_user
 from datetime import datetime
-from swiftform.decorators import require_fields
+from werkzeug.exceptions import Unauthorized
+from swiftform.validation.validation import ValidationRuleErrors, validate
+from swiftform.validation.rules import Required
 
 
 @api.route("forms", methods=["GET"])
@@ -20,11 +22,14 @@ def get_forms():
 
 @api.route("forms", methods=["POST"])
 @jwt_required()
-@require_fields(["name"])
 def create_form():
-    data = request.json
-    name = data.get("name")
-    description = data.get("description", "")
+    try:
+        validate([Required("name")])
+    except ValidationRuleErrors as e:
+        raise e
+
+    name = request.json.get("name")
+    description = request.json.get("description", "")
 
     if len(name) < 2:
         abort(422, description="Form name must be at least 2 characters long")
@@ -106,18 +111,21 @@ def get_form(form_id):
         raise e
 
     if form.user_id != current_user.id:
-        abort(401, description="You are not authorized to view this form")
+        raise Unauthorized
 
     return jsonify({"data": form.serialize()}), 200
 
 
 @api.route("forms/<int:form_id>", methods=["PUT"])
 @jwt_required()
-@require_fields(["name"])
 def update_form(form_id):
-    data = request.json
-    name = data.get("name")
-    description = data.get("description", "")
+    try:
+        validate([Required("name")])
+    except ValidationRuleErrors as e:
+        raise e
+
+    name = request.json.get("name")
+    description = request.json.get("description", "")
 
     try:
         form = Form.query.get(form_id)
@@ -127,13 +135,13 @@ def update_form(form_id):
         raise e
 
     if form.user_id != current_user.id:
-        abort(401, description="You are not authorized to update this form")
+        raise Unauthorized
 
     try:
         if len(name) < 2:
             abort(422, description="Form name must be at least 2 characters long")
 
-        form.name = data.get("name")
+        form.name = request.json.get("name")
 
         if description:
             form.description = description
@@ -159,7 +167,7 @@ def delete_form(form_id):
         abort(404, description="Form not found")
 
     if form.user_id != current_user.id:
-        abort(401, description="You are not authorized to delete this form")
+        raise Unauthorized
 
     try:
         db.session.delete(form)

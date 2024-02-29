@@ -1,5 +1,6 @@
 from flask import jsonify
 from swiftform.validation.validation import ValidationRuleErrors
+from werkzeug.exceptions import Unauthorized
 
 
 def on_validation_error(e: ValidationRuleErrors):
@@ -7,7 +8,11 @@ def on_validation_error(e: ValidationRuleErrors):
     for error in e.error_bags:
         errors.append({"field": error.attribute, "message": error.description})
 
-    return jsonify({"message": errors[0]['message'], "errors": errors})
+    return jsonify({"message": errors[0]["message"], "errors": errors})
+
+
+def on_unauthorized_error(e: Unauthorized):
+    return jsonify({"message": "Unauthorized"})
 
 
 def on_exception(e):
@@ -18,3 +23,4 @@ class ExceptionHandlers(object):
     def init_app(self, app):
         app.register_error_handler(Exception, on_exception)
         app.register_error_handler(ValidationRuleErrors, on_validation_error)
+        app.register_error_handler(Unauthorized, on_unauthorized_error)
