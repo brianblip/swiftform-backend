@@ -1,11 +1,16 @@
 from swiftform.api import api
-from flask import request, jsonify, abort
+from flask import request, jsonify
 from swiftform.models import User
 from swiftform.app import db
-
 from swiftform.validation.validation import ValidationRuleErrors, validate
-from swiftform.validation.rules import Required, ValidEmail, MinLength
-from werkzeug.security import generate_password_hash, check_password_hash
+from swiftform.validation.rules import (
+    Required,
+    ValidEmail,
+    MinLength,
+    UserAlreadyExists,
+    ValidCredentials,
+)
+from werkzeug.security import generate_password_hash
 from flask_jwt_extended import (
     create_access_token,
     unset_jwt_cookies,
@@ -22,6 +27,7 @@ def register_user():
                 Required("email"),
                 Required("password"),
                 MinLength("password", 8),
+                UserAlreadyExists("email"),
             ]
         )
         validate([ValidEmail("email")])
@@ -33,14 +39,6 @@ def register_user():
     email = request.json.get("email")
     password = request.json.get("password")
     avatar_url = request.json.get("avatar_url")
-
-    try:
-        user = User.query.filter_by(email=email).first()
-
-        if user:
-            abort(422, description="User already exists")
-    except Exception as e:
-        raise e
 
     try:
         hashed_password = generate_password_hash(password, method="scrypt")
@@ -73,19 +71,13 @@ def login_user():
     try:
         validate([Required("email"), Required("password")])
         validate([ValidEmail("email")])
+        validate([ValidCredentials("email", "password")])
     except ValidationRuleErrors as e:
         raise e
 
     email = request.json.get("email")
-    password = request.json.get("password")
 
-    try:
-        user = User.query.filter_by(email=email).first()
-
-        if not user or not check_password_hash(user.password, password):
-            abort(401, description="Invalid email or password")
-    except Exception as e:
-        raise e
+    user = User.query.filter_by(email=email).first()
 
     try:
         access_token = create_access_token(identity=user)

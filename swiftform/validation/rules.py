@@ -1,6 +1,8 @@
 from swiftform.validation.validation import ValidationRule, ValidationRuleError
 from flask import request
 from email_validator import validate_email, EmailNotValidError
+from swiftform.models import User
+from werkzeug.security import check_password_hash
 
 
 class Required(ValidationRule):
@@ -60,3 +62,31 @@ class MinLength(ValidationRule):
             )
 
         pass
+
+
+class ValidCredentials(ValidationRule):
+    def __init__(self, email_attribute, password_attribute):
+        self.email_attribute = email_attribute
+        self.password_attribute = password_attribute
+
+    def validate(self):
+        email = request.json.get(self.email_attribute)
+        password = request.json.get(self.password_attribute)
+
+        user = User.query.filter_by(email=email).first()
+
+        if not user or not check_password_hash(user.password, password):
+            raise ValidationRuleError("credentials", "Invalid email or password")
+
+
+class UserAlreadyExists(ValidationRule):
+    def __init__(self, attribute):
+        self.attribute = attribute
+
+    def validate(self) -> None:
+        attribute = self.attribute
+        value = request.json.get(attribute)
+        user = User.query.filter_by(email=value).first()
+
+        if user:
+            raise ValidationRuleError(attribute, "User already exists.")

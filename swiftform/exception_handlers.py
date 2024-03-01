@@ -11,11 +11,11 @@ def on_validation_error(e: ValidationRuleErrors):
     return jsonify({"message": errors[0]["message"], "errors": errors})
 
 
-def on_unauthorized_error(e: Unauthorized):
+def on_unauthorized_error(_: Unauthorized):
     return jsonify({"message": "Unauthorized"})
 
 
-def on_not_found_error(e: NotFound):
+def on_not_found_error(_: NotFound):
     return jsonify({"message": "Not Found"})
 
 

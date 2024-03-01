@@ -23,7 +23,7 @@ def create_choice():
     try:
         question = Question.query.get(question_id)
         if question is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         db.session.rollback()
         raise e
@@ -45,7 +45,7 @@ def get_choice(choice_id):
     try:
         choice = Choice.query.get(choice_id)
         if choice is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
@@ -65,7 +65,7 @@ def update_choice(choice_id):
     try:
         choice = Choice.query.get(choice_id)
         if choice is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
@@ -84,7 +84,7 @@ def delete_choice(choice_id):
     try:
         choice = Choice.query.get(choice_id)
         if choice is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 

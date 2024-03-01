@@ -21,12 +21,12 @@ def create_response():
     try:
         form = Form.query.get(form_id)
         if form is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
     if form.user_id != current_user.id:
-        raise Unauthorized
+        raise Unauthorized()
     try:
         response = Response(form_id=form_id, user_id=current_user.id)
         db.session.add(response)
@@ -59,12 +59,12 @@ def delete_response(response_id):
     try:
         response = Response.query.get(response_id)
         if response is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
     if response.user_id != current_user.id:
-        raise Unauthorized
+        raise Unauthorized()
 
     try:
         db.session.delete(response)

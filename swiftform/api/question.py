@@ -33,7 +33,7 @@ def create_question():
     try:
         section = Section.query.get(section_id)
         if section is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
@@ -61,7 +61,7 @@ def get_question(question_id):
     try:
         question = Question.query.get(question_id)
         if question is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
@@ -85,7 +85,7 @@ def update_question(question_id):
     try:
         question = Question.query.get(question_id)
         if question is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
@@ -97,7 +97,7 @@ def update_question(question_id):
         db.session.rollback()
         raise e
     if section is None:
-        raise NotFound
+        raise NotFound()
 
     question.type = request.json["type"]
     question.prompt = request.json["prompt"]
@@ -116,7 +116,7 @@ def delete_question(question_id):
     try:
         question = Question.query.get(question_id)
         if question is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 

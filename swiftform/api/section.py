@@ -22,13 +22,13 @@ def create_section():
     try:
         form = Form.query.get(form_id)
         if form is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         db.session.rollback()
         raise e
 
     if form.user_id != current_user.id:
-        raise Unauthorized
+        raise Unauthorized()
 
     try:
         new_section = Section(title=title, form_id=form_id)
@@ -47,14 +47,14 @@ def get_section(section_id):
     try:
         section = Section.query.get(section_id)
         if section is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
     try:
         form = Form.query.get(section.form_id)
         if form.user_id != current_user.id:
-            raise Unauthorized
+            raise Unauthorized()
     except Exception as e:
         db.session.rollback()
         raise e
@@ -68,14 +68,14 @@ def update_section(section_id):
     try:
         section = Section.query.get(section_id)
         if section is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
     try:
         form = Form.query.get(section.form_id)
         if form.user_id != current_user.id:
-            raise Unauthorized
+            raise Unauthorized()
     except Exception as e:
         db.session.rollback()
         raise e
@@ -92,14 +92,14 @@ def delete_section(section_id):
     try:
         section = Section.query.get(section_id)
         if section is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
     try:
         form = Form.query.get(section.form_id)
         if form.user_id != current_user.id:
-            raise Unauthorized
+            raise Unauthorized()
     except Exception as e:
         db.session.rollback()
         raise e

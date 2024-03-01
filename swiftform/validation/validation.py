@@ -37,7 +37,7 @@ def validate(rules):
             pass
         try:
             rule.validate()
-        except Exception as e:
+        except ValidationRuleError as e:
             error_bag.append(e)
 
     if len(error_bag) > 0:

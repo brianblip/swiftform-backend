@@ -103,12 +103,12 @@ def get_form(form_id):
     try:
         form = Form.query.get(form_id)
         if form is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
     if form.user_id != current_user.id:
-        raise Unauthorized
+        raise Unauthorized()
 
     return jsonify({"data": form.serialize()}), 200
 
@@ -126,12 +126,12 @@ def update_form(form_id):
     try:
         form = Form.query.get(form_id)
         if form is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
     if form.user_id != current_user.id:
-        raise Unauthorized
+        raise Unauthorized()
 
     try:
         form.name = request.json.get("name")
@@ -154,12 +154,12 @@ def delete_form(form_id):
     try:
         form = Form.query.get(form_id)
         if form is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
     if form.user_id != current_user.id:
-        raise Unauthorized
+        raise Unauthorized()
 
     try:
         db.session.delete(form)

@@ -22,7 +22,7 @@ def create_answer():
     try:
         question = Question.query.get(question_id)
         if question is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
@@ -44,7 +44,7 @@ def get_answer(answer_id):
     try:
         answer = Answer.query.get(answer_id)
         if answer is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
@@ -63,7 +63,7 @@ def update_answer(answer_id):
     try:
         answer = Answer.query.get(answer_id)
         if answer is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
@@ -79,7 +79,7 @@ def delete_answer(answer_id):
     try:
         answer = Answer.query.get(answer_id)
         if answer is None:
-            raise NotFound
+            raise NotFound()
     except Exception as e:
         raise e
 
