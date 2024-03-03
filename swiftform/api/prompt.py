@@ -124,12 +124,7 @@ OPEN_AI_DUMMY_RESPONSE = {
                             "message": "Please enter your full name",
                             "type": "required",
                             "value": True,
-                        },
-                        {
-                            "message": "Name cannot exceed 50 characters",
-                            "type": "maxLength",
-                            "value": 50,
-                        },
+                        }
                     ],
                 },
                 {
@@ -149,8 +144,34 @@ OPEN_AI_DUMMY_RESPONSE = {
                         },
                     ],
                 },
+                {"order": 3, "prompt": "Select your date of birth", "type": "date"},
             ],
             "title": "Personal Information",
-        }
+        },
+        {
+            "questions": [
+                {
+                    "choices": [
+                        {"order": 1, "text": "English"},
+                        {"order": 2, "text": "Spanish"},
+                        {"order": 3, "text": "French"},
+                    ],
+                    "order": 1,
+                    "prompt": "Select your preferred language",
+                    "type": "multiple_choice",
+                },
+                {
+                    "choices": [
+                        {"order": 1, "text": "Sports"},
+                        {"order": 2, "text": "Music"},
+                        {"order": 3, "text": "Travel"},
+                    ],
+                    "order": 2,
+                    "prompt": "Select your interests",
+                    "type": "checkbox",
+                },
+            ],
+            "title": "Preferences",
+        },
     ],
 }
