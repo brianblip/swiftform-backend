@@ -60,13 +60,18 @@ def create_prompt(text):
     - order: The order of the question in the section.
     - validations: An array of validation rules for the question.
 
+    Supported questions types are:
+    - textfield: A single-line text field.
+    - textarea: A multi-line text field.
+    - multiple_choice: A multiple-choice question.
+    - checkbox: A checkbox question.
+    - dropdown: A dropdown question.
+    - date: A date picker.
+
     Validations are optional. If validations are provided, you must provide an array of validation objects. And it must contain the following properties:
     - type: The type of validation (e.g., required, minLength, maxLength).
     - value: The value of the validation (e.g., true, 10, 100).
     - message: The error message to display if the validation fails.
-
-    Supported questions types are:
-    - textfield: A single-line text field.
 
     Supported validations are:
     - required: The field is required.
