@@ -59,14 +59,24 @@ def create_prompt(text):
     - prompt: The prompt for the question.
     - order: The order of the question in the section.
     - validations: An array of validation rules for the question.
+    - choices: An array of choices for the question (only for multiple_choice, checkbox, dropdown types).
+
+    Supported questions types are:
+    - textfield: A single-line text field.
+    - textarea: A multi-line text field.
+    - multiple_choice: A multiple-choice question.
+    - checkbox: A checkbox question.
+    - dropdown: A dropdown question.
+    - date: A date picker.
+
+    Each choice should contain the following properties:
+    - text: The label for the choice.
+    - order: The order of the choice.
 
     Validations are optional. If validations are provided, you must provide an array of validation objects. And it must contain the following properties:
     - type: The type of validation (e.g., required, minLength, maxLength).
     - value: The value of the validation (e.g., true, 10, 100).
     - message: The error message to display if the validation fails.
-
-    Supported questions types are:
-    - textfield: A single-line text field.
 
     Supported validations are:
     - required: The field is required.
@@ -114,12 +124,7 @@ OPEN_AI_DUMMY_RESPONSE = {
                             "message": "Please enter your full name",
                             "type": "required",
                             "value": True,
-                        },
-                        {
-                            "message": "Name cannot exceed 50 characters",
-                            "type": "maxLength",
-                            "value": 50,
-                        },
+                        }
                     ],
                 },
                 {
@@ -139,8 +144,34 @@ OPEN_AI_DUMMY_RESPONSE = {
                         },
                     ],
                 },
+                {"order": 3, "prompt": "Select your date of birth", "type": "date"},
             ],
             "title": "Personal Information",
-        }
+        },
+        {
+            "questions": [
+                {
+                    "choices": [
+                        {"order": 1, "text": "English"},
+                        {"order": 2, "text": "Spanish"},
+                        {"order": 3, "text": "French"},
+                    ],
+                    "order": 1,
+                    "prompt": "Select your preferred language",
+                    "type": "multiple_choice",
+                },
+                {
+                    "choices": [
+                        {"order": 1, "text": "Sports"},
+                        {"order": 2, "text": "Music"},
+                        {"order": 3, "text": "Travel"},
+                    ],
+                    "order": 2,
+                    "prompt": "Select your interests",
+                    "type": "checkbox",
+                },
+            ],
+            "title": "Preferences",
+        },
     ],
 }
