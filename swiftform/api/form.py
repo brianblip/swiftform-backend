@@ -1,12 +1,12 @@
 from swiftform.api import api
-from flask import request, jsonify, abort
-from swiftform.models import Form, Section, Question, QuestionType
+from flask import request, jsonify
+from swiftform.models import Form
 from swiftform.app import db
 from flask_jwt_extended import jwt_required, current_user
 from datetime import datetime
-from werkzeug.exceptions import Unauthorized
+from werkzeug.exceptions import Unauthorized, NotFound
 from swiftform.validation.validation import ValidationRuleErrors, validate
-from swiftform.validation.rules import Required
+from swiftform.validation.rules import Required, MinLength
 
 
 @api.route("forms", methods=["GET"])
@@ -24,15 +24,12 @@ def get_forms():
 @jwt_required()
 def create_form():
     try:
-        validate([Required("name")])
+        validate([Required("name"), MinLength("name", 2)])
     except ValidationRuleErrors as e:
         raise e
 
     name = request.json.get("name")
     description = request.json.get("description", "")
-
-    if len(name) < 2:
-        abort(422, description="Form name must be at least 2 characters long")
 
     try:
         new_form = Form(name=name, description=description, user_id=current_user.id)
@@ -106,12 +103,12 @@ def get_form(form_id):
     try:
         form = Form.query.get(form_id)
         if form is None:
-            abort(404, description="Form not found")
+            raise NotFound()
     except Exception as e:
         raise e
 
     if form.user_id != current_user.id:
-        raise Unauthorized
+        raise Unauthorized()
 
     return jsonify({"data": form.serialize()}), 200
 
@@ -120,27 +117,23 @@ def get_form(form_id):
 @jwt_required()
 def update_form(form_id):
     try:
-        validate([Required("name")])
+        validate([Required("name"), MinLength("name", 2)])
     except ValidationRuleErrors as e:
         raise e
 
-    name = request.json.get("name")
     description = request.json.get("description", "")
 
     try:
         form = Form.query.get(form_id)
         if form is None:
-            abort(404, description="Form not found")
+            raise NotFound()
     except Exception as e:
         raise e
 
     if form.user_id != current_user.id:
-        raise Unauthorized
+        raise Unauthorized()
 
     try:
-        if len(name) < 2:
-            abort(422, description="Form name must be at least 2 characters long")
-
         form.name = request.json.get("name")
 
         if description:
@@ -160,14 +153,13 @@ def update_form(form_id):
 def delete_form(form_id):
     try:
         form = Form.query.get(form_id)
+        if form is None:
+            raise NotFound()
     except Exception as e:
         raise e
 
-    if form is None:
-        abort(404, description="Form not found")
-
     if form.user_id != current_user.id:
-        raise Unauthorized
+        raise Unauthorized()
 
     try:
         db.session.delete(form)

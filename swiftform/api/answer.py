@@ -1,8 +1,9 @@
 from swiftform.api import api
-from flask import jsonify, request, abort
+from flask import jsonify, request
 from swiftform.models import Answer, Question
 from swiftform.validation.validation import ValidationRuleErrors, validate
 from swiftform.validation.rules import Required
+from werkzeug.exceptions import NotFound
 from flask_jwt_extended import jwt_required
 from swiftform.app import db
 
@@ -18,11 +19,10 @@ def create_answer():
     response_id = request.json.get("response_id")
     question_id = request.json.get("question_id")
     text = request.json.get("text")
-
     try:
         question = Question.query.get(question_id)
         if question is None:
-            abort(404, description="Question not found")
+            raise NotFound()
     except Exception as e:
         raise e
 
@@ -44,7 +44,7 @@ def get_answer(answer_id):
     try:
         answer = Answer.query.get(answer_id)
         if answer is None:
-            abort(404, description="Answer not found")
+            raise NotFound()
     except Exception as e:
         raise e
 
@@ -60,11 +60,10 @@ def update_answer(answer_id):
         raise e
 
     text = request.json.get("text")
-
     try:
         answer = Answer.query.get(answer_id)
         if answer is None:
-            abort(404, description="Answer not found")
+            raise NotFound()
     except Exception as e:
         raise e
 
@@ -80,7 +79,7 @@ def delete_answer(answer_id):
     try:
         answer = Answer.query.get(answer_id)
         if answer is None:
-            abort(404, description="Answer not found")
+            raise NotFound()
     except Exception as e:
         raise e
 
