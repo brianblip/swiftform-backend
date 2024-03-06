@@ -19,7 +19,7 @@ def create_app():
     :return: Flask app
     """
 
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="public", static_url_path="/public")
     app.config.from_object(config)
 
     # Initialize extensions
