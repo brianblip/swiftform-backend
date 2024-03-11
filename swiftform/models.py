@@ -80,8 +80,7 @@ class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.Enum(QuestionType), nullable=False)
     prompt = db.Column(db.Text, nullable=False)
-    section_id = db.Column(db.Integer, db.ForeignKey(
-        "section.id"), nullable=False)
+    section_id = db.Column(db.Integer, db.ForeignKey("section.id"), nullable=False)
     is_required = db.Column(db.Boolean, nullable=False, default=False)
     order = db.Column(db.Integer, nullable=False, default=0)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
@@ -94,7 +93,7 @@ class Question(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "type": self.type.value,
+            "type": self.type.value.upper(),
             "prompt": self.prompt,
             "section_id": self.section_id,
             "is_required": self.is_required,
@@ -127,10 +126,8 @@ class Response(db.Model):
 
 class Answer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    response_id = db.Column(db.Integer, db.ForeignKey(
-        "response.id"), nullable=False)
-    question_id = db.Column(db.Integer, db.ForeignKey(
-        "question.id"), nullable=False)
+    response_id = db.Column(db.Integer, db.ForeignKey("response.id"), nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey("question.id"), nullable=False)
     text = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
@@ -146,8 +143,7 @@ class Answer(db.Model):
 
 class Choice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    question_id = db.Column(db.Integer, db.ForeignKey(
-        "question.id"), nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey("question.id"), nullable=False)
     text = db.Column(db.Text, nullable=False)
     order = db.Column(db.Integer, nullable=False, default=0)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
@@ -166,8 +162,7 @@ class Choice(db.Model):
 
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    recipient_id = db.Column(
-        db.Integer, db.ForeignKey("user.id"), nullable=False)
+    recipient_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     title = db.Column(db.Text, nullable=False)
     message = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now, nullable=False)
