@@ -67,13 +67,13 @@ class Section(db.Model):
 
 
 class QuestionType(Enum):
-    TEXTFIELD = "textfield"
-    TEXTAREA = "textarea"
-    MULTIPLE_CHOICE = "multiple_choice"
-    CHECKBOX = "checkbox"
-    DROPDOWN = "dropdown"
-    ATTACHMENT = "attachment"
-    DATE = "date"
+    textfield = "textfield"
+    textarea = "textarea"
+    multiple_choice = "multiple_choice"
+    checkbox = "checkbox"
+    dropdown = "dropdown"
+    attachment = "attachment"
+    date = "date"
 
 
 class Question(db.Model):
@@ -93,7 +93,7 @@ class Question(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "type": self.type.value.upper(),
+            "type": self.type.value,
             "prompt": self.prompt,
             "section_id": self.section_id,
             "is_required": self.is_required,
