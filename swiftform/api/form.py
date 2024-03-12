@@ -1,6 +1,6 @@
 from swiftform.api import api
 from flask import request, jsonify
-from swiftform.models import Form
+from swiftform.models import Form, Section, Question, QuestionType
 from swiftform.app import db
 from flask_jwt_extended import jwt_required, current_user
 from datetime import datetime
@@ -64,9 +64,10 @@ def create_nested_form():
 
             questions = section["questions"]
             for question in questions:
-                print("checking question type")
-                print(question["type"])
-                validations = question["validations"]
+                validations = (
+                    question["validations"] if "validations" in question else []
+                )
+
                 # check if question has a validation with type "required"
                 required_validation = next(
                     (
