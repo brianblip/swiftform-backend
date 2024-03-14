@@ -42,15 +42,35 @@ def create_response():
     ), 201
 
 
-@api.route("responses", methods=["GET"])
+@api.route("responses/<int:response_id>", methods=["GET"])
 @jwt_required()
-def get_responses():
+def get_responses(response_id):
     try:
-        responses = Response.query.filter_by(user_id=current_user.id).all()
+        response = Response.query.get(response_id)
+        if response is None:
+            raise NotFound()
     except Exception as e:
         raise e
 
-    return jsonify({"data": [response.serialize() for response in responses]}), 200
+    if response.user_id != current_user.id:
+        raise Unauthorized()
+
+    return jsonify(
+        {
+            "data": response.serialize(),
+        }
+    ), 200
+
+
+@api.route("responses", methods=["GET"])
+@jwt_required()
+def get_all_responses():
+    responses = Response.query.filter_by(user_id=current_user.id).all()
+    return jsonify(
+        {
+            "data": [response.serialize() for response in responses],
+        }
+    ), 200
 
 
 @api.route("responses/<int:response_id>", methods=["DELETE"])
