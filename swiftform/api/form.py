@@ -13,11 +13,14 @@ from swiftform.validation.rules import Required, MinLength
 @jwt_required()
 def get_forms():
     try:
-        forms = Form.query.filter_by(user_id=current_user.id).all()
+        try:
+            forms = Form.query.filter_by(user_id=current_user.id).all()
+        except Exception as e:
+            raise e
+
+        return jsonify({"data": [form.serialize() for form in forms]}), 200
     except Exception as e:
         raise e
-
-    return jsonify({"data": [form.serialize() for form in forms]}), 200
 
 
 @api.route("forms", methods=["POST"])
@@ -78,17 +81,20 @@ def create_nested_form():
                     None,
                 )
 
-                question_type = QuestionType[question["type"].upper()]
+                question_type = QuestionType(question["type"])
 
-                new_question = Question(
-                    order=question["order"],
-                    prompt=question["prompt"],
-                    type=question_type,
-                    section_id=new_section.id,
-                    is_required=required_validation is not None,
-                )
+                try:
+                    new_question = Question(
+                        order=question["order"],
+                        prompt=question["prompt"],
+                        type=question_type,
+                        section_id=new_section.id,
+                        is_required=required_validation is not None,
+                    )
 
-                db.session.add(new_question)
+                    db.session.add(new_question)
+                except Exception as e:
+                    raise e
 
         db.session.commit()
 
