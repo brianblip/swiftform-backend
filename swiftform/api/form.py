@@ -1,6 +1,6 @@
 from swiftform.api import api
 from flask import request, jsonify
-from swiftform.models import Form, Section, Question, QuestionType
+from swiftform.models import Form, Section, Question, QuestionType, Choice
 from swiftform.app import db
 from flask_jwt_extended import jwt_required, current_user
 from datetime import datetime
@@ -93,8 +93,22 @@ def create_nested_form():
                     )
 
                     db.session.add(new_question)
+                    db.session.flush()
                 except Exception as e:
                     raise e
+
+                choices = question.get("choices", [])
+
+                for choice in choices:
+                    try:
+                        new_choice = Choice(
+                            text=choice["text"],
+                            question_id=new_question.id,
+                            order=choice["order"],
+                        )
+                        db.session.add(new_choice)
+                    except Exception as e:
+                        raise e
 
         db.session.commit()
 
