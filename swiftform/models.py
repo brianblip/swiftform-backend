@@ -32,6 +32,10 @@ class Form(db.Model):
         "Section", backref="form", lazy=True, cascade="all, delete-orphan"
     )
 
+    responses = relationship(
+        "Response", backref="form", lazy=True, cascade="all, delete-orphan"
+    )
+
     def serialize(self):
         return {
             "id": self.id,
