@@ -25,8 +25,6 @@ def create_response():
     except Exception as e:
         raise e
 
-    if form.user_id != current_user.id:
-        raise Unauthorized()
     try:
         response = Response(form_id=form_id, user_id=current_user.id)
         db.session.add(response)
@@ -52,9 +50,6 @@ def get_responses(response_id):
     except Exception as e:
         raise e
 
-    if response.user_id != current_user.id:
-        raise Unauthorized()
-
     return jsonify(
         {
             "data": response.serialize(),
@@ -65,7 +60,9 @@ def get_responses(response_id):
 @api.route("responses", methods=["GET"])
 @jwt_required()
 def get_all_responses():
-    responses = Response.query.filter_by(user_id=current_user.id).all()
+    form_id = request.args.get("form_id")
+
+    responses = Response.query.filter_by(form_id=form_id).all()
     return jsonify(
         {
             "data": [response.serialize() for response in responses],

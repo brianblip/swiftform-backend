@@ -128,9 +128,6 @@ def get_form(form_id):
     except Exception as e:
         raise e
 
-    if form.user_id != current_user.id:
-        raise Unauthorized()
-
     return jsonify({"data": form.serialize()}), 200
 
 
