@@ -1,6 +1,10 @@
 from swiftform.api import api
-from flask import jsonify
+from flask import jsonify, request
 from flask_jwt_extended import jwt_required, current_user
+from swiftform.app import db
+from swiftform.validation.validation import ValidationRuleErrors, validate
+from swiftform.validation.rules import Required, MinLength
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 @api.route("users/me", methods=["GET"])
@@ -15,3 +19,32 @@ def get_currently_logged_in_user():
         "avatar_url": current_user.avatar_url,
     }
     return jsonify({"data": data})
+
+
+@api.route("users/me", methods=["PATCH"])
+@jwt_required()
+def update_user():
+    try:
+        new_name = request.json.get("name")
+        current_password = request.json.get("current_password")
+        new_password = request.json.get("new_password")
+
+        if new_name:
+            validate([Required("name")])
+            current_user.name = new_name
+
+        if current_password and new_password:
+            if not check_password_hash(current_user.password, current_password):
+                return jsonify({"message": "Current password is incorrect"}), 400
+            validate([Required("new_password"), MinLength("new_password", 8)])
+            current_user.password = generate_password_hash(
+                new_password, method="scrypt"
+            )
+
+        db.session.commit()
+        return jsonify({"message": "User updated successfully"})
+    except ValidationRuleErrors as e:
+        raise e
+    except Exception as e:
+        db.session.rollback()
+        raise e
