@@ -29,7 +29,11 @@ class Form(db.Model):
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
     sections = relationship(
-        "Section", backref="form", lazy=True, cascade="all, delete-orphan"
+        "Section",
+        backref="form",
+        order_by="Section.order",
+        lazy=True,
+        cascade="all, delete-orphan",
     )
 
     responses = relationship(
@@ -56,7 +60,11 @@ class Section(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     questions = relationship(
-        "Question", backref="section", lazy=True, cascade="all, delete-orphan"
+        "Question",
+        backref="section",
+        order_by="Question.order",
+        lazy=True,
+        cascade="all, delete-orphan",
     )
 
     def serialize(self):
@@ -92,7 +100,11 @@ class Question(db.Model):
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
     choices = relationship(
-        "Choice", backref="question", lazy=True, cascade="all, delete-orphan"
+        "Choice",
+        backref="question",
+        lazy=True,
+        order_by="Choice.order",
+        cascade="all, delete-orphan",
     )
 
     def serialize(self):
