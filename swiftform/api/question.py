@@ -5,7 +5,7 @@ from datetime import datetime
 from swiftform.models import Question, Section
 from swiftform.app import db
 from swiftform.validation.validation import ValidationRuleErrors, validate
-from swiftform.validation.rules import Required, MinLength
+from swiftform.validation.rules import Required
 from werkzeug.exceptions import NotFound, Unauthorized
 
 
@@ -19,7 +19,6 @@ def create_question():
                 Required("prompt"),
                 Required("section_id"),
                 Required("order"),
-                MinLength("prompt", 2),
             ]
         )
     except ValidationRuleErrors as e:
@@ -88,7 +87,6 @@ def update_question(question_id):
                 Required("type"),
                 Required("prompt"),
                 Required("section_id"),
-                MinLength("prompt", 2),
             ]
         )
     except ValidationRuleErrors as e:
