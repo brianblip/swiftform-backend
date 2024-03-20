@@ -61,6 +61,7 @@ def update_choice(choice_id):
         raise e
 
     text = request.json.get("text")
+    order = request.json.get("order")
 
     try:
         choice = Choice.query.get(choice_id)
@@ -71,6 +72,7 @@ def update_choice(choice_id):
 
     try:
         choice.text = text
+        choice.order = order
         db.session.commit()
     except Exception as e:
         db.session.rollback()

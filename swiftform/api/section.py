@@ -18,6 +18,7 @@ def create_section():
 
     title = request.json.get("title")
     form_id = request.json.get("form_id")
+    order = request.json.get("order")
 
     try:
         form = Form.query.get(form_id)
@@ -31,7 +32,7 @@ def create_section():
         raise Unauthorized()
 
     try:
-        new_section = Section(title=title, form_id=form_id)
+        new_section = Section(title=title, form_id=form_id, order=order)
 
         db.session.add(new_section)
         db.session.commit()
@@ -81,6 +82,7 @@ def update_section(section_id):
         raise e
 
     section.title = request.json.get("title")
+    section.order = request.json.get("order")
     db.session.commit()
 
     return jsonify({"data": section.serialize()}), 200
