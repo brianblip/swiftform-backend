@@ -120,6 +120,7 @@ def update_question(question_id):
     question.section_id = section_id
     question.is_required = request.json.get("is_required", False)
     question.updated_at = datetime.now()
+    question.order = request.json.get("order")
 
     db.session.commit()
 
