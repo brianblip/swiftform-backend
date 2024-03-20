@@ -52,9 +52,9 @@ class Section(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     form_id = db.Column(db.Integer, db.ForeignKey("form.id"), nullable=False)
     title = db.Column(db.Text, nullable=False)
+    order = db.Column(db.Integer, nullable=False, default=0)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
-
     questions = relationship(
         "Question", backref="section", lazy=True, cascade="all, delete-orphan"
     )
@@ -67,6 +67,7 @@ class Section(db.Model):
             "questions": [question.serialize() for question in self.questions],
             "created_at": self.created_at,
             "updated_at": self.updated_at,
+            "order": self.order,
         }
 
 
