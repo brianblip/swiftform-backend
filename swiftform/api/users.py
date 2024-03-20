@@ -5,6 +5,8 @@ from swiftform.app import db
 from swiftform.validation.validation import ValidationRuleErrors, validate
 from swiftform.validation.rules import Required, MinLength
 from werkzeug.security import generate_password_hash, check_password_hash
+from swiftform.models import User
+from werkzeug.exceptions import NotFound
 
 
 @api.route("users/me", methods=["GET"])
@@ -19,6 +21,24 @@ def get_currently_logged_in_user():
         "avatar_url": current_user.avatar_url,
     }
     return jsonify({"data": data})
+
+
+@api.route("users/<int:user_id>", methods=["GET"])
+@jwt_required()
+def get_user_by_id(user_id):
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            raise NotFound()
+        data = {
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "avatar_url": user.avatar_url,
+        }
+        return jsonify({"data": data})
+    except Exception as e:
+        raise e
 
 
 @api.route("users/me", methods=["PATCH"])
