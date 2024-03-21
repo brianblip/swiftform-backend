@@ -109,12 +109,13 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
 
 
 # dummy response for when openai is disabled
-# prompt = create_prompt("Registration Form")
+# prompt = create_prompt("Contact Form with 2 sections")
 OPEN_AI_DUMMY_RESPONSE = {
-    "description": "A form for users to register for an event.",
-    "name": "Registration Form",
+    "description": "A form for users to contact us",
+    "name": "Contact Form",
     "sections": [
         {
+            "order": 1,
             "questions": [
                 {
                     "order": 1,
@@ -145,34 +146,31 @@ OPEN_AI_DUMMY_RESPONSE = {
                         },
                     ],
                 },
-                {"order": 3, "prompt": "Select your date of birth", "type": "date"},
             ],
             "title": "Personal Information",
         },
         {
+            "order": 2,
             "questions": [
                 {
-                    "choices": [
-                        {"order": 1, "text": "English"},
-                        {"order": 2, "text": "Spanish"},
-                        {"order": 3, "text": "French"},
-                    ],
                     "order": 1,
-                    "prompt": "Select your preferred language",
-                    "type": "multiple_choice",
-                },
-                {
-                    "choices": [
-                        {"order": 1, "text": "Sports"},
-                        {"order": 2, "text": "Music"},
-                        {"order": 3, "text": "Travel"},
+                    "prompt": "Enter your message",
+                    "type": "textarea",
+                    "validations": [
+                        {
+                            "message": "Please enter your message",
+                            "type": "required",
+                            "value": True,
+                        },
+                        {
+                            "message": "Message must be at least 10 characters long",
+                            "type": "minLength",
+                            "value": 10,
+                        },
                     ],
-                    "order": 2,
-                    "prompt": "Select your interests",
-                    "type": "checkbox",
-                },
+                }
             ],
-            "title": "Preferences",
+            "title": "Message",
         },
     ],
 }
