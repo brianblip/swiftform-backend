@@ -61,7 +61,9 @@ def create_nested_form():
 
         sections = request.json.get("sections")
         for section in sections:
-            new_section = Section(title=section["title"], form_id=new_form.id)
+            new_section = Section(
+                title=section["title"], form_id=new_form.id, order=section["order"]
+            )
             db.session.add(new_section)
             db.session.flush()
 
