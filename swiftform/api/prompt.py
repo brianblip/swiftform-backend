@@ -53,6 +53,7 @@ def create_prompt(text):
     Each section should contain the following properties:
     - title: The title of the section.
     - questions: An array of questions in the section.
+    - order: The order of the section in the form.
 
     Each question should contain the following properties:
     - type: The type of the question.
